@@ -1,49 +1,64 @@
 package telemetryconsole.com.example;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import telemetryconsole.com.example.Common.AccessLevel;
 import telemetryconsole.com.example.Common.User;
+import telemetryconsole.com.example.Common.UserDBConnector;
+import telemetryconsole.com.example.Common.UserDbException;
 import telemetryconsole.com.example.Common.UserDetails;
 
 public class Authenticate {
 
-    // The below may need to be made public and perhaps stated in the communication diagram
-    // Maybe better in its own class?
-    private Connection connect() {
-        // SQLite connection string
-        String url = "jdbc:sqlite:C://sqlite/db/consoleUsers.db";
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
+    private UserDetails _userDetails;
+    private UserDBConnector _userDbConnector;
+
+    public UserDetails get_userDetails() {
+        return _userDetails;
     }
 
-    public User AuthenticateUser(UserDetails userDetails) {
+    public void set_userDetails(UserDetails _userDetails) {
+        this._userDetails = _userDetails;
+    }
 
-        // Suggested operations:
-        // 1) Associate with userdetails (set to private variable)
-        // 2) Create Connection object (look into basic security)
-        // 3) Check user (pass connection object)
-        // 4) Create new User with approriate access level
+    public Authenticate(UserDetails userDetails) {
+        
+        // 1) Associate userDetails with self
+        set_userDetails(userDetails);
+
+        // 2) Create new private instance of DB connector
+        _userDbConnector = new UserDBConnector();
+    }
+
+    public User AuthenticateUser() {
+       
+        User user;
+
+        // 3) Check user
+        AccessLevel accessLevel;
+        try {
+            accessLevel = checkUser(get_userDetails());
+            user = new User(_userDetails, accessLevel);
+        } catch (UserDbException e) {
+            // Create an instance of "error user" to return so that the caller knows
+            // that there has been an exception and can take some appropriate action
+            // if required
+            user = new User(true);
+        }
+
         // 5) Return the new instance of user
-
-        return new User(userDetails); // Default return - might need to change!
+        return user;
     }
     
-    public AccessLevel checkUser(UserDetails userDetails) {
+    public AccessLevel checkUser(UserDetails userDetails) throws UserDbException {
 
         String sql = "SELECT username, password, accesslevel "
                     + "FROM users WHERE username = ?";
         
-        try (Connection conn = connect();
+        try (Connection conn = _userDbConnector.connect();
              PreparedStatement pstmt  = conn.prepareStatement(sql)) {
             
             // set the value
@@ -55,13 +70,16 @@ public class Authenticate {
                 if (rs.getString("password").equals(userDetails.getPassword())) {
                     return AccessLevel.values()[rs.getInt("accesslevel")];
                 } else {
-                    System.out.println("User was found but password incorrect");;
+                    System.out.println("User was found but password incorrect");
+                    return AccessLevel.NONE;
                 }
+            } else {
+                // Invalid user (not found)
+                return AccessLevel.INVALID;
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            // Exception - re-throw with added userDetails
+            throw new UserDbException(userDetails, e);
         }
-
-        return AccessLevel.NONE;
     }
 }

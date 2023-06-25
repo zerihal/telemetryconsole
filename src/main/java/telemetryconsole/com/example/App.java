@@ -1,6 +1,6 @@
 package telemetryconsole.com.example;
 
-import telemetryconsole.com.example.Common.AccessLevel;
+import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
 
 /**
@@ -22,10 +22,12 @@ public class App
         //Sandbox.InsertUser("consoleUsers.db", "jsweet", "password1", 2);
         Sandbox.SelectAllUsers("consoleUsers.db");
 
-        Authenticate authenticate = new Authenticate();
         UserDetails userDetails = new UserDetails("jsweet", "password1");
-        AccessLevel accessLevel = authenticate.checkUser(userDetails);
+
+        Authenticate authenticate = new Authenticate(userDetails);
+
+        User authenticatedUser = authenticate.AuthenticateUser();
         
-        System.out.println("User access level = " + accessLevel);
+        System.out.println("User access level = " + authenticatedUser.getAccessLevel());
     }
 }

@@ -19,11 +19,18 @@ public class User {
     }
 
     public User(UserDetails userdetails, AccessLevel accessLevel) {    
-        this(userdetails);
-        setAccessLevel(accessLevel);
+        this.setUserDetails(userdetails);
+        this.setAccessLevel(accessLevel);
     }
 
     public User(UserDetails userDetails) {
-        setUserDetails(userDetails);
+        this.setUserDetails(userDetails);
+    }
+
+    public User(Boolean errorUser) {
+        if (errorUser) {
+            this.setUserDetails(new UserDetails(DefaultStrings.ErrorUser, null));
+            this.setAccessLevel(AccessLevel.INVALID);
+        }
     }
 }
