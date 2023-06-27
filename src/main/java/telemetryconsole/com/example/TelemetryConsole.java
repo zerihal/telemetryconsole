@@ -1,6 +1,5 @@
 package telemetryconsole.com.example;
 
-import telemetryconsole.com.SampleSetup.Sandbox;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
 
@@ -36,6 +35,6 @@ public class TelemetryConsole
         
         System.out.println("User access level = " + getCurrentUser().getAccessLevel());
 
-        
+
     }
 }
