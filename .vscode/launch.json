@@ -12,9 +12,9 @@
         },
         {
             "type": "java",
-            "name": "App",
+            "name": "TelemetryConsole",
             "request": "launch",
-            "mainClass": "telemetryconsole.com.example.App",
+            "mainClass": "telemetryconsole.com.example.TelemetryConsole",
             "projectName": "telemetryconsole"
         }
     ]

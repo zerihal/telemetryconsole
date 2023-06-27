@@ -1,5 +1,6 @@
 package telemetryconsole.com.example;
 
+import telemetryconsole.com.SampleSetup.Sandbox;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
 
@@ -7,8 +8,18 @@ import telemetryconsole.com.example.Common.UserDetails;
  * Hello world!
  *
  */
-public class App 
+public class TelemetryConsole 
 {
+    private static User currentUser;
+   
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(User user) {
+        TelemetryConsole.currentUser = user;
+    }
+
     public static void main( String[] args )
     {
         // NOTE: SQLITE is not secure, but should in theory only be visible to the application
@@ -17,17 +28,14 @@ public class App
 
         System.out.println("Device Telemetry Console");
 
-        //Sandbox.CreateNewDatabase("consoleUsers.db");
-        //Sandbox.CreateNewUsersTable("consoleUsers.db");
-        //Sandbox.InsertUser("consoleUsers.db", "jsweet", "password1", 2);
-        Sandbox.SelectAllUsers("consoleUsers.db");
-
         UserDetails userDetails = new UserDetails("jsweet", "password1");
 
         Authenticate authenticate = new Authenticate(userDetails);
 
-        User authenticatedUser = authenticate.AuthenticateUser();
+        setCurrentUser(authenticate.AuthenticateUser());
         
-        System.out.println("User access level = " + authenticatedUser.getAccessLevel());
+        System.out.println("User access level = " + getCurrentUser().getAccessLevel());
+
+        
     }
 }

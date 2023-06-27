@@ -1,4 +1,4 @@
-package telemetryconsole.com.example;
+package telemetryconsole.com.SampleSetup;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -8,11 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import telemetryconsole.com.example.Common.DefaultStrings;
+
 public class Sandbox {
 
     private static Connection Connect(String dbName) {
         // SQLite connection string
-        String url = "jdbc:sqlite:C://sqlite/db/" + dbName;
+        String url = DefaultStrings.SQLiteDBPath + dbName;
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -24,7 +26,7 @@ public class Sandbox {
     
     public static void CreateNewDatabase(String fileName) {
 
-        String url = "jdbc:sqlite:C:/sqlite/db/" + fileName;
+        String url = DefaultStrings.SQLiteDBPath + fileName;
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -40,7 +42,7 @@ public class Sandbox {
 
     public static void CreateNewUsersTable(String dbFileName) {
         // SQLite connection string
-        String url = "jdbc:sqlite:C://sqlite/db/" + dbFileName;
+        String url = DefaultStrings.SQLiteDBPath + dbFileName;
         
         // SQL statement for creating a new table
         String sql = "CREATE TABLE IF NOT EXISTS users (\n"

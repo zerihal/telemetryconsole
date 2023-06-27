@@ -8,7 +8,7 @@ public class UserDBConnector {
 
     public Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:C://sqlite/db/consoleUsers.db";
+        String url = DefaultStrings.SQLiteDBPath + DefaultStrings.ConsoleUsersDB;
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
