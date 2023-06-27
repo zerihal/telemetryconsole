@@ -34,7 +34,5 @@ public class TelemetryConsole
         setCurrentUser(authenticate.AuthenticateUser());
         
         System.out.println("User access level = " + getCurrentUser().getAccessLevel());
-
-
     }
 }
