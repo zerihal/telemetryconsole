@@ -1,5 +1,6 @@
 package telemetryconsole.com.example;
 
+import telemetryconsole.com.SampleSetup.SetupSampleData;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
 
@@ -34,5 +35,9 @@ public class TelemetryConsole
         setCurrentUser(authenticate.AuthenticateUser());
         
         System.out.println("User access level = " + getCurrentUser().getAccessLevel());
+
+
+        //SetupSampleData setupSampleData = new SetupSampleData();
+        //setupSampleData.RunSetup();
     }
 }

@@ -33,8 +33,9 @@ public class Sandbox {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
                 System.out.println("A new database has been created.");
-            }
 
+                conn.close();
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -49,6 +50,9 @@ public class Sandbox {
             // create a new table
             System.out.println("Connected to DB - Creating table ...");
             stmt.execute(sql);
+
+            stmt.close();
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -63,6 +67,9 @@ public class Sandbox {
             pstmt.setString(2, password);
             pstmt.setInt(3, accesslevel);
             pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -79,6 +86,9 @@ public class Sandbox {
             pstmt.setString(4, deviceTypeName);
             pstmt.setInt(5, status);
             pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -88,8 +98,8 @@ public class Sandbox {
         String sql = "SELECT id, username, password, accesslevel FROM users";
         
         try (Connection conn = Connect(dbName);
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
             
             // loop through the result set
             while (rs.next()) {
@@ -98,6 +108,33 @@ public class Sandbox {
                                    rs.getString("password") + "\t" +
                                    rs.getInt("accesslevel"));
             }
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void SelectAllDevices(String dbName){
+        String sql = "SELECT id, datelogged, deviceidentifier, devicename, devicetypename, devicestatus FROM loggeddata";
+        
+        try (Connection conn = Connect(dbName);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            
+            // loop through the result set
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") +  "\t" + 
+                                   rs.getString("datelogged") + "\t" +
+                                   rs.getString("deviceidentifier") + "\t" +
+                                   rs.getString("devicename") + "\t" +
+                                   rs.getString("devicetypename") + "\t" +
+                                   rs.getInt("devicestatus"));
+            }
+
+            stmt.close();
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

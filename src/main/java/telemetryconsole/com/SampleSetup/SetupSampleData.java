@@ -39,19 +39,66 @@ public class SetupSampleData implements ISetupSample {
         Sandbox.CreateNewTable(DefaultStrings.ConsoleUsersDB, sql);
 
         // Generate and insert some sample data to the DB
-        for (int i = 0; i < 100; i++) {
+        String deviceType = "ESP32-100";
 
+        for (int i = 0; i < 10; i++) {
+            String deviceName = "TestDrive_" + String.valueOf(i);
+            String deviceId = GenerateSerialNo();
+
+            // Create 10 sample entries for the device
+            for (int i2 = 0; i2 < 10; i2++) {
+                String randomDateTime = GetDateTimeString();
+                int randomStatus = GenerateStatus();
+
+                Sandbox.InsertDeviceData(DefaultStrings.ConsoleUsersDB, 
+                    randomDateTime, deviceId, deviceName, deviceType, randomStatus);
+            }
         }
+
+        // Output the data logged
+        Sandbox.SelectAllDevices(DefaultStrings.ConsoleUsersDB);
     }
     
     private static String GetDateTimeString() {
-        String day = String.valueOf(rand.nextInt(29) + 1);
-        String month = String.valueOf(rand.nextInt(1) + 5);
+        String day = String.format("%02d", rand.nextInt(29) + 1);
+        String month = String.format("%02d",rand.nextInt(1) + 5);
         String year = "2023";
-        String hour = String.valueOf(rand.nextInt(7) + 14);
-        String min = String.valueOf(rand.nextInt(59));
-        String sec = String.valueOf(rand.nextInt(59));
+        String hour = String.format("%02d",rand.nextInt(7) + 14);
+        String min = String.format("%02d",rand.nextInt(59));
+        String sec = String.format("%02d",rand.nextInt(59));
 
-        return day + ":" + month  + ":" + year + " " + hour + ":" + min + ":" + sec;
+        return day + "/" + month  + "/" + year + " " + hour + ":" + min + ":" + sec;
+    }
+
+    private static String GenerateSerialNo() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVXYZ0123456789";
+
+        String serialNo = "S";
+
+        for (int i = 0; i < 9; i++) {
+            char ranChar = chars.charAt(rand.nextInt(33));
+            serialNo += ranChar;
+        }
+
+        return serialNo;
+    }
+
+    private static int GenerateStatus() {
+        // Status 0 is Healthy
+        // Status 1 is Tripped
+        // Status 2 is Fault
+        // Status 3 is Unknown
+
+        int seed = rand.nextInt(12);
+
+        if (seed > 7 && seed < 10) {
+            return 1;
+        } else if (seed == 10) {
+            return 2;
+        } else if (seed == 11) {
+            return 3;
+        } else {
+            return 0;
+        }
     }
 }
