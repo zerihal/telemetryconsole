@@ -4,6 +4,7 @@ import telemetryconsole.com.example.Common.DefaultStrings;
 
 public class SetupSampleUsers implements ISetupSample {
     
+    @Override
     public void RunSetup() {
 
         // ToDo: If DB already exists then delete it or ask user to confirm
@@ -11,7 +12,15 @@ public class SetupSampleUsers implements ISetupSample {
         // Create the database and a new users table
         System.out.println("Creating users DB and table");
         Sandbox.CreateNewDatabase(DefaultStrings.ConsoleUsersDB);
-        Sandbox.CreateNewUsersTable(DefaultStrings.ConsoleUsersDB);
+
+        String sql = "CREATE TABLE IF NOT EXISTS users (\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	username text NOT NULL,\n"
+                + "	password text NOT NULL,\n"
+                + " accesslevel integer NOT NULL\n"
+                + ");";
+
+        Sandbox.CreateNewTable(DefaultStrings.ConsoleUsersDB, sql);
 
         // Insert some sample users into the table
         System.out.println("Adding sample users");

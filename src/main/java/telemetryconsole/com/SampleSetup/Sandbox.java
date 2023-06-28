@@ -40,17 +40,9 @@ public class Sandbox {
         }
     }
 
-    public static void CreateNewUsersTable(String dbFileName) {
+    public static void CreateNewTable(String dbFileName, String sql) {
         // SQLite connection string
         String url = DefaultStrings.SQLiteDBPath + dbFileName;
-        
-        // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS users (\n"
-                + "	id integer PRIMARY KEY,\n"
-                + "	username text NOT NULL,\n"
-                + "	password text NOT NULL,\n"
-                + " accesslevel integer NOT NULL\n"
-                + ");";
         
         try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
@@ -70,6 +62,22 @@ public class Sandbox {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             pstmt.setInt(3, accesslevel);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void InsertDeviceData(String dbName, String dateLogged, String devIdentifier, String deviceName, String deviceTypeName, int status) {
+        String sql = "INSERT INTO loggeddata(datelogged,deviceidentifier,devicename,devicetypename,devicestatus) VALUES(?,?,?,?,?)";
+
+        try (Connection conn = Connect(dbName);
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, dateLogged);
+            pstmt.setString(2, devIdentifier);
+            pstmt.setString(3, deviceName);
+            pstmt.setString(4, deviceTypeName);
+            pstmt.setInt(5, status);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
