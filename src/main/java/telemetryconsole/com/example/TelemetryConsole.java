@@ -1,6 +1,7 @@
 package telemetryconsole.com.example;
 
-import telemetryconsole.com.SampleSetup.SetupSampleData;
+//import telemetryconsole.com.SampleSetup.SetupSampleData;
+//import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
 
@@ -28,7 +29,10 @@ public class TelemetryConsole
 
         System.out.println("Device Telemetry Console");
 
-        UserDetails userDetails = new UserDetails("jsweet", "password1");
+        //SetupSampleUsers setupSampleUsers = new SetupSampleUsers();
+        //setupSampleUsers.RunSetup();
+
+        UserDetails userDetails = new UserDetails("jblogs", "password1");
 
         Authenticate authenticate = new Authenticate(userDetails);
 

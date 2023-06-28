@@ -36,7 +36,7 @@ public class SetupSampleData implements ISetupSample {
         + "	tripdata text\n"
         + ");";
 
-        Sandbox.CreateNewTable(DefaultStrings.ConsoleUsersDB, sql);
+        Sandbox.CreateNewTable(DefaultStrings.DeviceDataDB, sql);
 
         // Generate and insert some sample data to the DB
         String deviceType = "ESP32-100";
@@ -50,13 +50,13 @@ public class SetupSampleData implements ISetupSample {
                 String randomDateTime = GetDateTimeString();
                 int randomStatus = GenerateStatus();
 
-                Sandbox.InsertDeviceData(DefaultStrings.ConsoleUsersDB, 
+                Sandbox.InsertDeviceData(DefaultStrings.DeviceDataDB, 
                     randomDateTime, deviceId, deviceName, deviceType, randomStatus);
             }
         }
 
         // Output the data logged
-        Sandbox.SelectAllDevices(DefaultStrings.ConsoleUsersDB);
+        Sandbox.SelectAllDevices(DefaultStrings.DeviceDataDB);
     }
     
     private static String GetDateTimeString() {
