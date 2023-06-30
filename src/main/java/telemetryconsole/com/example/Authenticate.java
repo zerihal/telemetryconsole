@@ -24,10 +24,23 @@ public class Authenticate {
         this._userDetails = _userDetails;
     }
 
+    public UserDBConnector get_userDbConnector() {
+        return _userDbConnector;
+    }
+
     public Authenticate(UserDetails userDetails) {
         
         // 1) Associate userDetails with self
         set_userDetails(userDetails);
+
+        // 2) Create new private instance of DB connector
+        _userDbConnector = new UserDBConnector();
+    }
+
+    public Authenticate(String username, String password) {
+        
+        // 1) Associate userDetails with self
+        set_userDetails(new UserDetails(username, password));
 
         // 2) Create new private instance of DB connector
         _userDbConnector = new UserDBConnector();
@@ -58,7 +71,7 @@ public class Authenticate {
         String sql = "SELECT username, password, accesslevel "
                     + "FROM users WHERE username = ?";
         
-        try (Connection conn = _userDbConnector.connect();
+        try (Connection conn = get_userDbConnector().connect();
              PreparedStatement pstmt  = conn.prepareStatement(sql)) {
             
             // set the value
