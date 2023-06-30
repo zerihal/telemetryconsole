@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 import telemetryconsole.com.example.Common.DefaultStrings;
 
@@ -138,5 +139,32 @@ public class Sandbox {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static String SelectRandomDeviceIdentifier(String dbName){
+        String sql = "SELECT deviceidentifier FROM loggeddata";
+        Random rand = new Random();
+        int randomRow = rand.nextInt(98) + 1;
+        String ident = "";
+        
+        try (Connection conn = Connect(dbName);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            
+            // loop through the result set
+            while (rs.next()) {
+                if (rs.getRow() == randomRow) {
+                    ident = rs.getString("deviceidentifier");
+                    break;
+                }
+            }
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return ident;
     }
 }

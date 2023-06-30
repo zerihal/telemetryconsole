@@ -28,15 +28,6 @@ public class Authenticate {
         return _userDbConnector;
     }
 
-    public Authenticate(UserDetails userDetails) {
-        
-        // 1) Associate userDetails with self
-        set_userDetails(userDetails);
-
-        // 2) Create new private instance of DB connector
-        _userDbConnector = new UserDBConnector();
-    }
-
     public Authenticate(String username, String password) {
         
         // 1) Associate userDetails with self

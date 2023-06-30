@@ -1,6 +1,11 @@
 package telemetryconsole.com.example;
 
+import telemetryconsole.com.example.Common.ParseDataException;
+import telemetryconsole.com.example.Common.QueryParameters;
+import telemetryconsole.com.example.Common.QueryType;
+import telemetryconsole.com.example.Common.UnauthorisedUserException;
 import telemetryconsole.com.example.Common.User;
+import telemetryconsole.com.example.Common.AccessLevel;
 
 /*
 import telemetryconsole.com.SampleSetup.Sandbox;
@@ -11,7 +16,6 @@ import telemetryconsole.com.example.Common.QueryType;
 import telemetryconsole.com.SampleSetup.SetupSampleData;
 import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.UserDetails;
-import telemetryconsole.com.example.Common.AccessLevel;
 */
 
 /**
@@ -22,6 +26,8 @@ public class TelemetryConsole
 {
     private static User _currentUser;
     private static Authenticate _authenticate;
+    private static Query _currentQuery;
+    private static QueryResults _currentQueryResults;
 
     public static User getCurrentUser() {
         return _currentUser;
@@ -37,6 +43,22 @@ public class TelemetryConsole
 
     public static void set_authenticate(Authenticate _authenticate) {
         TelemetryConsole._authenticate = _authenticate;
+    }
+
+    public static Query get_currentQuery() {
+        return _currentQuery;
+    }
+
+    public static void set_currentQuery(Query _currentQuery) {
+        TelemetryConsole._currentQuery = _currentQuery;
+    }
+
+    public static QueryResults get_currentQueryResults() {
+        return _currentQueryResults;
+    }
+
+    public static void set_currentQueryResults(QueryResults _currentQueryResults) {
+        TelemetryConsole._currentQueryResults = _currentQueryResults;
     }
 
     public static void main( String[] args )
@@ -97,5 +119,21 @@ public class TelemetryConsole
             default:
                 break;
         }
+    }
+
+    public static void RunQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException, UnauthorisedUserException {
+        
+        if (getCurrentUser() == null) {
+            return;
+        }
+
+        AccessLevel cuAccess = getCurrentUser().getAccessLevel();
+
+        if (!(cuAccess == AccessLevel.ADMIN || cuAccess == AccessLevel.USER)) {
+            throw new UnauthorisedUserException(cuAccess);
+        }
+
+        set_currentQuery(new Query(queryType, queryParams));
+        set_currentQueryResults(get_currentQuery().RunQuery());
     }
 }

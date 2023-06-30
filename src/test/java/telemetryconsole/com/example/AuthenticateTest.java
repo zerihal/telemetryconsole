@@ -21,7 +21,7 @@ public class AuthenticateTest {
     static User testUser;
 
     @BeforeAll
-    static void setupSampleDB() {
+    static void setUp() {
         SetupSampleUsers setupSampleUser = new SetupSampleUsers();
         setupSampleUser.RunSetup();
 
