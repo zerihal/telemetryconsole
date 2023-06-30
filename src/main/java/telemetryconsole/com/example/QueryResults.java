@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResults {
-    private int NumberOfItemsPerPage;
-    private List<QueryItem> queryItems;
+    private int _numberOfItemsPerPage;
+    private List<QueryItem> _queryItems;
 
     public int getNumberOfItemsPerPage() {
-        return NumberOfItemsPerPage;
+        return _numberOfItemsPerPage;
     }
 
     public List<QueryItem> getQueryItems() {
-        return queryItems;
+        return _queryItems;
     }
 
     public QueryResults() {
-        queryItems = new ArrayList<QueryItem>();
+        _queryItems = new ArrayList<QueryItem>();
+    }
+
+    public QueryResults(List<QueryItem> devices) {
+        _queryItems = devices;
     }
 }

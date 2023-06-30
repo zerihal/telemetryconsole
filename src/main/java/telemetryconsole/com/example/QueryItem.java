@@ -1,5 +1,15 @@
 package telemetryconsole.com.example;
 
-public class QueryItem {
-    
+import java.util.Date;
+
+public abstract class QueryItem {
+    private Date _dateLogged;
+
+    public Date get_dateLogged() {
+        return _dateLogged;
+    }
+
+    public void set_dateLogged(Date _dateLogged) {
+        this._dateLogged = _dateLogged;
+    }
 }

@@ -13,7 +13,7 @@ public class DeviceParameters extends QueryParameters {
     }
 
     public DeviceParameters(String deviceIdent) {
-        setDeviceIdentifier(deviceIdentifier);
+        setDeviceIdentifier(deviceIdent);
         ParameterCount = 1;
     }
 }

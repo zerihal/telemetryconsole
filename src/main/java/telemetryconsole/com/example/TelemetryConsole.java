@@ -1,5 +1,10 @@
 package telemetryconsole.com.example;
 
+import telemetryconsole.com.SampleSetup.Sandbox;
+import telemetryconsole.com.example.Common.DefaultStrings;
+import telemetryconsole.com.example.Common.DeviceParameters;
+import telemetryconsole.com.example.Common.ParseDataException;
+import telemetryconsole.com.example.Common.QueryType;
 //import telemetryconsole.com.SampleSetup.SetupSampleData;
 //import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.User;
@@ -40,7 +45,22 @@ public class TelemetryConsole
         
         System.out.println("User access level = " + getCurrentUser().getAccessLevel());
 
+        String deviceIdent = "SRSU4T51ZK";
 
+        Query query = new Query(QueryType.QUERYDEVICE, new DeviceParameters(deviceIdent));
+        QueryResults results = null;
+
+        try {
+            results = query.RunQuery();
+        } catch (ParseDataException e) {
+
+        }
+
+        if (results != null) {
+            int queryItemCount = results.getQueryItems().size();
+            System.out.println(queryItemCount);
+        }
+        
         //SetupSampleData setupSampleData = new SetupSampleData();
         //setupSampleData.RunSetup();
     }
