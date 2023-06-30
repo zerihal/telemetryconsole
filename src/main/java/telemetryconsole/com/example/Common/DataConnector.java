@@ -64,9 +64,7 @@ public class DataConnector {
             default:
                 System.out.println("Query type not yet implemented!");
                 break;
-        } 
-
-        System.out.println(dbQuery);
+        }
 
         if (dbQuery != null) { 
             try (Connection conn = connect();

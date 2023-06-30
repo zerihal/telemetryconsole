@@ -8,8 +8,8 @@ public class SetupSampleUsers implements ISetupSample {
     @Override
     public void RunSetup() {
 
-        // ToDo: If DB already exists then delete it or ask user to confirm
-        if (FileHelper.DeleteFile(DefaultStrings.SQLiteDBPath + DefaultStrings.ConsoleUsersDB)) {
+        // If DB already exists then delete it
+        if (FileHelper.DeleteFile(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
 
             System.out.println("Existing sample DB found and deleted or did not exist");
 

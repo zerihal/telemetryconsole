@@ -19,6 +19,15 @@ public final class DefaultStrings {
     }
 
     /**
+     * Gets the Windows SQLite DB path. 
+     */
+    public static String WindowsSQLiteDbPath() {
+        String sqliteDbPath = get_sqliteDbPath();
+        String translatedPath = sqliteDbPath.replace("//", "/").replace('/', '\\').replace("jdbc:sqlite:", "");
+        return translatedPath;
+    }
+
+    /**
      * Default name to identify an invalid User.
      */
     public static String ErrorUser = "DefaultErrorUser";
