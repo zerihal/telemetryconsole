@@ -1,7 +1,7 @@
 package telemetryconsole.com.example;
 
-import telemetryconsole.com.SampleSetup.Sandbox;
-import telemetryconsole.com.example.Common.DefaultStrings;
+//import telemetryconsole.com.SampleSetup.Sandbox;
+//import telemetryconsole.com.example.Common.DefaultStrings;
 import telemetryconsole.com.example.Common.DeviceParameters;
 import telemetryconsole.com.example.Common.ParseDataException;
 import telemetryconsole.com.example.Common.QueryType;

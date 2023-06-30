@@ -25,7 +25,7 @@ public class Sandbox {
     }
     
     public static void CreateNewDatabase(String fileName) {
-
+        
         String url = DefaultStrings.SQLiteDBPath + fileName;
 
         try (Connection conn = DriverManager.getConnection(url)) {

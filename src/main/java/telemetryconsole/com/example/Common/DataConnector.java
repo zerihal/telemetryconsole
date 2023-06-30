@@ -1,6 +1,5 @@
 package telemetryconsole.com.example.Common;
 
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
