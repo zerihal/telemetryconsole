@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-
 import telemetryconsole.com.example.Common.AccessLevel;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDBConnector;
