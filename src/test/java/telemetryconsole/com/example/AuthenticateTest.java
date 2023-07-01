@@ -95,6 +95,14 @@ public class AuthenticateTest {
         // Check that the correct access level has been obtained for the user and linked to the User
         // object that was returned
         assertEquals(userAccessLevel, testUser.getAccessLevel());
+    }
+
+    @Test
+    void testSetUser() {
+        /*
+        Postcondition:
+        -- new instance of User linked to TelemetryConsole
+        */
 
         // Check that the user authenticated user was linked to TelemetryConsole
         assertNotNull(TelemetryConsole.getCurrentUser());

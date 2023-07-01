@@ -17,6 +17,10 @@ public class Query {
     private QueryParameters _queryParameters;
     private DataConnector _dataConnector;
 
+    public DataConnector get_dataConnector() {
+        return _dataConnector;
+    }
+
     public QueryType getQueryType() {
         return _queryType;
     }
@@ -45,7 +49,7 @@ public class Query {
         _dataConnector = new DataConnector();
 
         // Query data source
-        ArrayList<Object[]> dbQueryResultsRaw = _dataConnector.getData(getQueryType(), getQueryParameters());
+        ArrayList<Object[]> dbQueryResultsRaw = get_dataConnector().getData(getQueryType(), getQueryParameters());
 
         // Parse results to obtain collection of Device objects
         ArrayList<QueryItem> devices = null;
@@ -65,7 +69,7 @@ public class Query {
         return queryResults;
     }
 
-    private ArrayList<QueryItem> ParseData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
+    public ArrayList<QueryItem> ParseData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
 
         ArrayList<QueryItem> devices = new ArrayList<QueryItem>();
         SimpleDateFormat dtFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
