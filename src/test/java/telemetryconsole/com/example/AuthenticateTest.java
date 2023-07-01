@@ -119,7 +119,7 @@ public class AuthenticateTest {
 
         // Check authenticating with an invalid username (password irrelevant) - this should return
         // access level of INVALID
-        TelemetryConsole.AuthenticateUser("duff", "none");
+        TelemetryConsole.AuthenticateUser("dodgyUser", "none");
         currentAccessLevel = TelemetryConsole.get_currentUser().getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
 
