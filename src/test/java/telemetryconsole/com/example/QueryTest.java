@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,7 +68,6 @@ public class QueryTest {
     @Test
     void testQueryConstructor() {
 
-        // ToDo - Test preconditions and postconditions where applicable
         /*
          Precondition:
          -- the user has been authenticated
@@ -74,7 +76,7 @@ public class QueryTest {
 
         // Check that the user has been authenticated and has sufficient access to run
         // the query
-        User authenticatedUser = TelemetryConsole.getCurrentUser();
+        User authenticatedUser = TelemetryConsole.get_currentUser();
         assertNotNull(authenticatedUser);
 
         AccessLevel authUserAccess = authenticatedUser.getAccessLevel();
@@ -101,16 +103,15 @@ public class QueryTest {
     @Test
     void testRunQuery() {
 
-        // ToDo - Test any remaining postconditions
-
         /*
         Postcondition:
         -- creates query based on QueryType of queryDevice and deviceParameters.deviceIdentifier
         -- and creates an instance of DataConnector to query the data source for all corresponding entries
         -- and parses the returned query result data
+        -- and creates new instances of Device (QueryItem) for data entry
         -- and creates a new instance of QueryResults
-        -- and creates new instances of Device for each QueryItem 
-        -- which is linked to QueryResults
+        -- which is linked to the created instances of Device 
+
          */
 
         // Check that the correct instance of Query has been created with appropriate implementation
@@ -129,22 +130,44 @@ public class QueryTest {
         DataConnector dataConnector = createdQuery.get_dataConnector();
         assertNotNull(dataConnector);
 
-        // Check that the data was parsed from the raw data. To test this we'll create use the dataConnector
-        // instance from the query and obtain another instance of raw data - if parsed then then the raw
-        // date strings should have been converted to Date objects
+        // Check that the data was parsed from the raw data. To test this we'll use the dataConnector
+        // instance from the query to obtain another instance of raw data and call the ParseData method
+        // to verify that it was parsed by checking the date string to object translation. Note that this
+        // is all done within the RunQuery method in normal operation
         ArrayList<Object[]> testDataRaw = dataConnector.getData(createdQuery.getQueryType(), devParams);
+        try {
+            ArrayList<QueryItem> parsedData = createdQuery.ParseData(testDataRaw);
+            SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-        // ToDo: Compare raw data against the queryResults
+            for (int i = 0; i < parsedData.size(); i++) {
 
-        // ToDo: Possible change for the above (and to improve effeciency) - add property to Query for 
-        // QueryResults and for getter on TelemetryConsole change to get_currentQuery() maybe to a method
-        // that returns QueryResults from a method. 
-        // NOTE: By doing this it will change the last postcondition and the communication diagram - instead
-        // of returning/linking queryResults to self, it will do the same with the instance of Query. This
-        // may actually make the communication diagram a bit simpler as the return message from Query to 
-        // TelemetryConsole can be removed as linking will be implicit from the operation (create) itself
-        // :-)
+                Date dataEntryDate = parsedData.get(i).get_dateLogged();
+                String parsedDateToString = dtFormat.format(dataEntryDate);
+                String expectedDate = (String)testDataRaw.get(i)[0];
+                assertEquals(parsedDateToString, expectedDate);
+            }
+        } catch (Exception e) {
+            // If any exception has occurred here then test should be failed. Use assertTrue(false) to do this
+            assertTrue(false, "Parse data exception");   
+        }
 
+        // We have already tested that a new instance of QueryResults has been created when checking that
+        // the QueryResults instance linked to TelemetryConsole was not null, but we need to verify that the
+        // concrete implementations of QueryItem are Device and the count in the collection matches the
+        // number of entries from the raw data
+        List<QueryItem> queryItems = TelemetryConsole.get_currentQueryResults().getQueryItems();
         
+        for (QueryItem queryItem : TelemetryConsole.get_currentQueryResults().getQueryItems()) {
+            assertTrue(queryItem instanceof Device);
+        }
+
+        assertEquals(queryItems.size(), testDataRaw.size());
+    }
+
+    @Test
+    void testInvalidQuery() {
+        // Extension - Invalid query has been entered (i.e. invalid device ID)
+        // ToDo ...
+        // All serial numbers start with S, so we'll use a different character to ensure that it is invalid
     }
 }

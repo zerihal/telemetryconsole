@@ -29,11 +29,11 @@ public class TelemetryConsole
     private static Query _currentQuery;
     private static QueryResults _currentQueryResults;
 
-    public static User getCurrentUser() {
+    public static User get_currentUser() {
         return _currentUser;
     }
 
-    public static void setCurrentUser(User user) {
+    public static void set_currentUser(User user) {
         TelemetryConsole._currentUser = user;
     }
 
@@ -107,15 +107,27 @@ public class TelemetryConsole
         set_authenticate(new Authenticate(username, password));
 
         User user = get_authenticate().AuthenticateUser();
+        set_currentUser(user);
 
         switch(user.getAccessLevel()) {
+
             case USER:
+                DisplayLoggedOnUser();
+                break;
+
             case ADMIN:
-                setCurrentUser(user);
+                DisplayLoggedOnUser();
+                // Placeholder - Display admin options on console
                 break;
 
             case NONE:
+                IncorrectUserPasswordError();
+                break;
+
             case INVALID:
+                InvalidUserError();
+                break;
+
             default:
                 break;
         }
@@ -123,11 +135,11 @@ public class TelemetryConsole
 
     public static void RunQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException, UnauthorisedUserException {
         
-        if (getCurrentUser() == null) {
+        if (get_currentUser() == null) {
             return;
         }
 
-        AccessLevel cuAccess = getCurrentUser().getAccessLevel();
+        AccessLevel cuAccess = get_currentUser().getAccessLevel();
 
         if (!(cuAccess == AccessLevel.ADMIN || cuAccess == AccessLevel.USER)) {
             throw new UnauthorisedUserException(cuAccess);
@@ -135,5 +147,20 @@ public class TelemetryConsole
 
         set_currentQuery(new Query(queryType, queryParams));
         set_currentQueryResults(get_currentQuery().RunQuery());
+    }
+
+    private static void DisplayLoggedOnUser() {
+        // Placeholder - this is to display the logged on user in the UI (for now just output though)
+        System.out.println("Logged on user: " + get_currentUser().getUserDetails().getUsername());
+    }
+
+    private static void IncorrectUserPasswordError() {
+        // Placeholder - this is to display incorrect password error/prompt in the UI (for now just output though)
+        System.out.println("Incorrect password!");
+    }
+
+    private static void InvalidUserError() {
+        // Placeholder - this is to display invalid user warning/prompt in the UI (for now just output though)
+        System.out.println("Invalid user!");
     }
 }

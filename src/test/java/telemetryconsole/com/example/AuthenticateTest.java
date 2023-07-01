@@ -105,6 +105,26 @@ public class AuthenticateTest {
         */
 
         // Check that the user authenticated user was linked to TelemetryConsole
-        assertNotNull(TelemetryConsole.getCurrentUser());
+        assertNotNull(TelemetryConsole.get_currentUser());
+    }
+
+    @Test
+    void testUnauthorisedUser() {
+
+        // Check authenticating with a valid username but invalid password - this should return access
+        // level of NONE
+        TelemetryConsole.AuthenticateUser("jblogs", "wrongPassword");
+        AccessLevel currentAccessLevel = TelemetryConsole.get_currentUser().getAccessLevel();
+        assertEquals(currentAccessLevel, AccessLevel.NONE);
+
+        // Check authenticating with an invalid username (password irrelevant) - this should return
+        // access level of INVALID
+        TelemetryConsole.AuthenticateUser("duff", "none");
+        currentAccessLevel = TelemetryConsole.get_currentUser().getAccessLevel();
+        assertEquals(currentAccessLevel, AccessLevel.INVALID);
+
+        // Note: Error/prompt to advise the user of an invalid username or password to be handled in 
+        // TelemetryConsole and shown in the UI, so out of scope for this operation and this prototype
+        // of the system.
     }
 }
