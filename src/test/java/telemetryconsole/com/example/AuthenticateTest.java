@@ -18,17 +18,6 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class AuthenticateTest {
 
-    // IMPORTANT NOTE:
-    // AN INSTANCE OF TELEMETRYCONSOLE CAN BE CREATED - DO WE PERHAPS WANT TO DO THIS INSTEAD OF
-    // JUST CALLING THE STATIC METHODS AND PROPERTIES? I GUESS THIS WOULD CREATE AND INSTANCE ON
-    // RUNNING THE TESTS SOMEWHERE IN THE JUNIT BACKGROUND ANYWAY?
-    // SUGGEST MOVING TELEMETRYCONSOLE TO A NON-STATIC CLASS AND JUST CREATING AN INSTANCE IN A NEW
-    // "App" CLASS.
-    // Actually, a better idea might be to keep as is but create a copy of TelemetryConsole called
-    // TelemetryConsoleInstance (or suchlike), or just rename original, with note to say that the
-    // current one is for test only - maybe TelemetryConsoleTest (current/static) and TelemetryConsole
-    // (instance). 
-
     // Fixture declarations - set as static so they can be re-used between some of the tests that
     // check parts of the overall operation
     private static User testUser;

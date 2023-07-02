@@ -46,7 +46,6 @@ public class QueryTest {
 
         // Create an authenticated test user to check preconditions
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
-        //TelemetryConsole.AuthenticateUser(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword());
         currentUser = new Authenticate(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword()).AuthenticateUser();
 
         // Create instance of DeviceParameters to pass to the query. As the data, including the device identifier,
@@ -98,11 +97,6 @@ public class QueryTest {
 
     @Test
     void testRunQuery() {
-
-        // ToDo: Split the below up as per example and as done above. Need to do this for AuthenticateTest
-        // too.
-        // ToDo: Move TelemetryConsole to a new class and change original to App.java that simply calls 
-        // through to telemetryConsole (this is for tidy up only)
 
         /*
         Postcondition:
@@ -184,7 +178,7 @@ public class QueryTest {
         assertEquals(queryItems.size(), testDataRaw.size());
 
         /*
-        -- and links to self
+        -- and links QueryResults to self
         */
 
         // If all above subtests have passed then we have an instance of QueryResult from running the
