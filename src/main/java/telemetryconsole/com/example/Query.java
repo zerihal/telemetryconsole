@@ -10,12 +10,14 @@ import telemetryconsole.com.example.Common.DeviceStatus;
 import telemetryconsole.com.example.Common.ParseDataException;
 import telemetryconsole.com.example.Common.QueryParameters;
 import telemetryconsole.com.example.Common.QueryType;
+import telemetryconsole.com.example.Common.QueryFilters.QueryFilter;
 
 public class Query {
 
     private QueryType _queryType;
     private QueryParameters _queryParameters;
     private DataConnector _dataConnector;
+    private QueryFilter _queryFilter;
 
     public DataConnector get_dataConnector() {
         return _dataConnector;
@@ -33,6 +35,13 @@ public class Query {
         this._queryParameters = queryParameters;
     }
 
+    public QueryFilter get_queryFilter() {
+        return _queryFilter;
+    }
+
+    public void set_queryFilter(QueryFilter _queryFilter) {
+        this._queryFilter = _queryFilter;
+    }
 
     public Query(QueryType selectedQueryType, QueryParameters params) {
         
@@ -41,6 +50,13 @@ public class Query {
         if (params != null) {
             setQueryParameters(params);
         }
+    }
+
+    // Placeholder constructor for when QueryFilter implementation is done
+    public Query(QueryType selectedQueryType, QueryParameters params, QueryFilter queryFilter) {
+        
+        this(selectedQueryType, params);
+        set_queryFilter(queryFilter);
     }
 
     public QueryResults RunQuery() throws ParseDataException {

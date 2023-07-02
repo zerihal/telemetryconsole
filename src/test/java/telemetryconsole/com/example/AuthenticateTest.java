@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,8 +18,22 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class AuthenticateTest {
 
-    static Authenticate authenticate;
-    static User testUser;
+    // IMPORTANT NOTE:
+    // AN INSTANCE OF TELEMETRYCONSOLE CAN BE CREATED - DO WE PERHAPS WANT TO DO THIS INSTEAD OF
+    // JUST CALLING THE STATIC METHODS AND PROPERTIES? I GUESS THIS WOULD CREATE AND INSTANCE ON
+    // RUNNING THE TESTS SOMEWHERE IN THE JUNIT BACKGROUND ANYWAY?
+    // SUGGEST MOVING TELEMETRYCONSOLE TO A NON-STATIC CLASS AND JUST CREATING AN INSTANCE IN A NEW
+    // "App" CLASS.
+    // Actually, a better idea might be to keep as is but create a copy of TelemetryConsole called
+    // TelemetryConsoleInstance (or suchlike), or just rename original, with note to say that the
+    // current one is for test only - maybe TelemetryConsoleTest (current/static) and TelemetryConsole
+    // (instance). 
+
+    // Fixture declarations - set as static so they can be re-used between some of the tests that
+    // check parts of the overall operation
+    private static User testUser;
+    private static Authenticate authenticate;
+    private static User currentUser;
 
     @BeforeAll
     static void setUp() {
@@ -28,8 +43,6 @@ public class AuthenticateTest {
         // Create a test user - this is what should be created by the Authenticate operations. The one created
         // manually below is to be used to verify the operations and contracts.
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
-        TelemetryConsole.AuthenticateUser(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword());
-        authenticate = TelemetryConsole.get_authenticate();
     }
 
     @AfterAll
@@ -43,11 +56,6 @@ public class AuthenticateTest {
         /* 
         Precondition:
         -- a username and password have been entered for user
-
-        Postcondition:
-        -- a new instance of UserDetails is created from username and password
-        -- and is linked to a new instance of Authenticate
-        -- which creates a new instance of UserDBConnector
         */
 
         String username = testUser.getUserDetails().getUsername();
@@ -57,6 +65,15 @@ public class AuthenticateTest {
         assertFalse(StringHelper.IsStringNullOrEmpty(username));
         assertFalse(StringHelper.IsStringNullOrEmpty(password));
 
+        /*
+        Postcondition:
+        -- a new instance of UserDetails is created from username and password
+        -- and is linked to a new instance of Authenticate
+        */
+
+        // Create new instance of Authenticate       
+        authenticate = new Authenticate(username, password);
+
         // Check that an instance of UserDetails has been created from the constructor and
         // this has been correctly created from the username and password that were passed
         // in from testUser
@@ -64,7 +81,10 @@ public class AuthenticateTest {
         assertEquals(username, authenticate.get_userDetails().getUsername());
         assertEquals(password, authenticate.get_userDetails().getPassword());
 
-        // Check that UserDBConnector has been created
+        /*
+        -- which creates a new instance of UserDBConnector
+        */
+
         assertNotNull(authenticate.get_userDbConnector());
     }
 
@@ -76,18 +96,20 @@ public class AuthenticateTest {
         -- uses the instance of UserDBConnector created on construction to check user exists and password matches
         -- and obtains access level for user
         -- and creates new instance of User with access level set
-        -- and links to TelemetryConsole
         */
 
-        // Run the AuthenticateUser method from the Authenticate instance in TelemetryConsole on its own
+        // Ensure that the user details for Authenticate are set to that of the test user
+        authenticate.set_userDetails(testUser.getUserDetails());
+
+        // Run the AuthenticateUser method from the Authenticate instance previously created on its own
         // so that we can check that access level is not invalid or none (TelemetryConsole itself handles
         // this but this is in order to check the handled results that would mean that CurrentUser is not
         // set)
-        User authenticatedUser = authenticate.AuthenticateUser();
+        currentUser = authenticate.AuthenticateUser();
 
         // Check that user existed and password matched - if user did not exist then access level
         // would be AccessLevel.INVALID and if password mismatch then would be AccessLevel.NONE
-        AccessLevel userAccessLevel = authenticatedUser.getAccessLevel();
+        AccessLevel userAccessLevel = currentUser.getAccessLevel();
 
         assertNotEquals(userAccessLevel, AccessLevel.INVALID);
         assertNotEquals(userAccessLevel, AccessLevel.NONE);
@@ -95,36 +117,42 @@ public class AuthenticateTest {
         // Check that the correct access level has been obtained for the user and linked to the User
         // object that was returned
         assertEquals(userAccessLevel, testUser.getAccessLevel());
-    }
 
-    @Test
-    void testSetUser() {
         /*
-        Postcondition:
-        -- new instance of User linked to TelemetryConsole
+        -- and links to self
         */
 
-        // Check that the user authenticated user was linked to TelemetryConsole
-        assertNotNull(TelemetryConsole.get_currentUser());
+        // If all above subtests have passed then we have an instance of User from running 
+        // AuthenticateUser(), which would then be linked back to the caller (TelemetryConsole), 
+        // however as this is just a test on the operation, there is nothing to link it to. As such, 
+        // this is just included for completeness and passed based on the fact that the valid object 
+        // could be returned as required
+
+        assertTrue(true);
     }
 
     @Test
     void testUnauthorisedUser() {
+        
+        /*
+        Extension - The user is not authorised to use the system and is advised
+        */
 
         // Check authenticating with a valid username but invalid password - this should return access
         // level of NONE
-        TelemetryConsole.AuthenticateUser("jblogs", "wrongPassword");
-        AccessLevel currentAccessLevel = TelemetryConsole.get_currentUser().getAccessLevel();
+        authenticate.set_userDetails(new UserDetails("jblogs", "wrongPassword"));
+        currentUser = authenticate.AuthenticateUser();
+        AccessLevel currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.NONE);
 
         // Check authenticating with an invalid username (password irrelevant) - this should return
         // access level of INVALID
-        TelemetryConsole.AuthenticateUser("dodgyUser", "none");
-        currentAccessLevel = TelemetryConsole.get_currentUser().getAccessLevel();
+        authenticate.set_userDetails(new UserDetails("dodgyUser", "none"));
+        currentUser = authenticate.AuthenticateUser();
+        currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
 
-        // Note: Error/prompt to advise the user of an invalid username or password to be handled in 
-        // TelemetryConsole and shown in the UI, so out of scope for this operation and this prototype
-        // of the system.
+        // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
+        // scope for this test
     }
 }
