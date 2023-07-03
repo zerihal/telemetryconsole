@@ -3,6 +3,7 @@ package telemetryconsole.com.example;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
@@ -101,7 +102,7 @@ public class QueryTest {
         /*
         Postcondition:
         -- creates query based on QueryType of queryDevice and deviceParameters.deviceIdentifier
-         */
+        */
 
         // Check that the correct instance of Query has been created with appropriate implementation
         // of QueryParameters. For an instance of device parameters this should have a parameter count
@@ -116,22 +117,27 @@ public class QueryTest {
         assertEquals(devParams.getDeviceIdentifier(), testDeviceIdentifier);
 
         /*
-         -- and runs query using a new instance of DataConnector to obtain all corresponding device entries
+        -- and creates a new instance of DataConnector
+        -- and runs query using instance of DataConnector to obtain raw data
         */
         QueryResults queryResults = null;
 
         try {
             queryResults = query.RunQuery();
         } catch (ParseDataException e) {
-            // Ignore here - we'll do an assert not null to test for exception later  
+            // Use a simple assert null check on the exception to fail the test if thrown
+            assertNull(e, "Unexpected parse data exception");
         }
 
         // Check that an instance of DataConnector was created and linked to Query
         DataConnector dataConnector = query.get_dataConnector();
         assertNotNull(dataConnector);
 
+        // Check queryResults not null
+        assertNotNull(queryResults);
+
         /*
-         -- and parses the returned query result data
+        -- and parses the returned data
         */
 
         // To test this we'll use the dataConnector instance from the query to obtain another instance of 
@@ -152,11 +158,9 @@ public class QueryTest {
                 assertEquals(parsedDateToString, expectedDate);
             }
         } catch (Exception e) {
-            // Ignore here - if exception was thrown from this method then would be same root cause as
-            // catch above that we'll test with assert not null below
+            // Use a simple assert null check on the exception to fail the test if thrown
+            assertNull(e, "Unexpected get data exception from DataConnector");
         }
-
-        assertNotNull(queryResults, "Parse data exception thrown");
 
         /*
         -- and creates new instances of Device (QueryItem) for data entry
