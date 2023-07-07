@@ -17,10 +17,15 @@ public class Query {
     private QueryType _queryType;
     private QueryParameters _queryParameters;
     private DataConnector _dataConnector;
+
     private QueryFilter _queryFilter;
 
     public DataConnector get_dataConnector() {
         return _dataConnector;
+    }
+
+    public void set_dataConnector(DataConnector _dataConnector) {
+        this._dataConnector = _dataConnector;
     }
 
     public QueryType getQueryType() {
@@ -62,10 +67,11 @@ public class Query {
     public QueryResults RunQuery() throws ParseDataException {
 
         // Create instance of DataConnector (update operation) or use static instance
-        _dataConnector = new DataConnector();
+        if (_dataConnector == null)
+            _dataConnector = new DataConnector();
 
         // Query data source
-        ArrayList<Object[]> dbQueryResultsRaw = get_dataConnector().getData(getQueryType(), getQueryParameters());
+        ArrayList<Object[]> dbQueryResultsRaw = get_dataConnector().getData(getQueryType(), getQueryParameters(), get_queryFilter());
 
         // Parse results to obtain collection of Device objects
         ArrayList<QueryItem> devices = null;
@@ -79,7 +85,7 @@ public class Query {
         }
         
         // Create new instance of QueryResults
-        QueryResults queryResults = new QueryResults(devices);
+        QueryResults queryResults = new QueryResults(get_dataConnector(), devices);
 
         // Return QueryResults
         return queryResults;

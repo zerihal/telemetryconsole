@@ -145,7 +145,7 @@ public class QueryTest {
         // to object translation. 
         // Note that this is all done within the RunQuery method in normal operation
 
-        ArrayList<Object[]> testDataRaw = dataConnector.getData(query.getQueryType(), devParams);
+        ArrayList<Object[]> testDataRaw = dataConnector.getData(query.getQueryType(), devParams, null);
         try {
             ArrayList<QueryItem> parsedData = query.ParseData(testDataRaw);
             SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
