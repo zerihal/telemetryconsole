@@ -36,7 +36,7 @@ public class Authenticate {
         _userDbConnector = new UserDBConnector();
     }
 
-    public User AuthenticateUser() {
+    public User DoAuthentication() {
        
         User user;
 

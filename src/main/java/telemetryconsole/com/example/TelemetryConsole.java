@@ -42,7 +42,7 @@ public class TelemetryConsole {
     public void AuthenticateUser(String username, String password) {
         set_authenticate(new Authenticate(username, password));
 
-        User user = get_authenticate().AuthenticateUser();
+        User user = get_authenticate().DoAuthentication();
         set_currentUser(user);
 
         switch(user.getAccessLevel()) {
@@ -82,7 +82,7 @@ public class TelemetryConsole {
         }
 
         Query query = new Query(queryType, queryParams);
-        set_currentQueryResults(query.RunQuery());
+        set_currentQueryResults(query.ExecuteQuery());
     }
 
     private void DisplayLoggedOnUser() {

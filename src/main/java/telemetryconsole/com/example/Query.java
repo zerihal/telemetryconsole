@@ -64,7 +64,7 @@ public class Query {
         set_queryFilter(queryFilter);
     }
 
-    public QueryResults RunQuery() throws ParseDataException {
+    public QueryResults ExecuteQuery() throws ParseDataException {
 
         // Create instance of DataConnector (update operation) or use static instance
         if (_dataConnector == null)

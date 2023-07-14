@@ -94,7 +94,7 @@ public class AuthenticateTest {
         // so that we can check that access level is not invalid or none (TelemetryConsole itself handles
         // this but this is in order to check the handled results that would mean that CurrentUser is not
         // set)
-        currentUser = authenticate.AuthenticateUser();
+        currentUser = authenticate.DoAuthentication();
 
         // Check that user existed and password matched - if user did not exist then access level
         // would be AccessLevel.INVALID and if password mismatch then would be AccessLevel.NONE
@@ -130,14 +130,14 @@ public class AuthenticateTest {
         // Check authenticating with a valid username but invalid password - this should return access
         // level of NONE
         authenticate.set_userDetails(new UserDetails("jblogs", "wrongPassword"));
-        currentUser = authenticate.AuthenticateUser();
+        currentUser = authenticate.DoAuthentication();
         AccessLevel currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.NONE);
 
         // Check authenticating with an invalid username (password irrelevant) - this should return
         // access level of INVALID
         authenticate.set_userDetails(new UserDetails("dodgyUser", "none"));
-        currentUser = authenticate.AuthenticateUser();
+        currentUser = authenticate.DoAuthentication();
         currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
 
