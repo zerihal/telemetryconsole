@@ -71,13 +71,13 @@ public class Query {
             _dataConnector = new DataConnector();
 
         // Query data source
-        ArrayList<Object[]> dbQueryResultsRaw = get_dataConnector().getData(getQueryType(), getQueryParameters(), get_queryFilter());
+        ArrayList<Object[]> rawQueryData = get_dataConnector().getData(getQueryType(), getQueryParameters(), get_queryFilter());
 
         // Parse results to obtain collection of Device objects
         ArrayList<QueryItem> devices = null;
         
         try {
-            devices = ParseData(dbQueryResultsRaw);
+            devices = ParseData(rawQueryData);
         } catch (ParseException e) {
             throw new ParseDataException();
         } catch (ParseDataException parseDataException) {
