@@ -1,4 +1,4 @@
-# telemetryconsole
+# Telemetry Console
 
 Testing Notes:
 
