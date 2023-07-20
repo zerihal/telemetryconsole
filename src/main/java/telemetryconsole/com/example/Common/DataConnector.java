@@ -47,17 +47,15 @@ public class DataConnector {
         
         ArrayList<Object[]> rawData = new ArrayList<Object[]>();
         String dbQuery = null;
+
+        // Create a base query string - this can then be appended with specifics for the query type, parameters and filters
+        // as require
         String deviceDataBaseQuery = "SELECT id, datelogged, deviceidentifier, devicename, devicetypename, devicestatus FROM loggeddata";
 
         switch(queryType) {
             case QUERYDEVICE:
-                if (queryParams != null && queryParams instanceof DeviceParameters) {
-                    DeviceParameters devParams = (DeviceParameters)queryParams;
-                    dbQuery = deviceDataBaseQuery + " WHERE deviceidentifier = '" + devParams.getDeviceIdentifier() + "'";
-                } else {
-                    // Device query type has been specified, however without valid DeviceParameters. Throw an exception
-                    // as this is an error!
-                }
+                DeviceParameters devParams = (DeviceParameters)queryParams;
+                dbQuery = deviceDataBaseQuery + " WHERE deviceidentifier = '" + devParams.getDeviceIdentifier() + "'";
                 break;
 
             case QUERYALLDEVICES:

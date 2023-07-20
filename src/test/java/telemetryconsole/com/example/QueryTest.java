@@ -117,9 +117,10 @@ public class QueryTest {
         assertEquals(devParams.getDeviceIdentifier(), testDeviceIdentifier);
 
         /*
-        -- and creates a new instance of DataConnector
-        -- and runs query using instance of DataConnector to obtain raw data
+        -- and executes query
+        -- which creates a new instance of DataConnector
         */
+
         QueryResults queryResults = null;
 
         try {
@@ -137,6 +138,7 @@ public class QueryTest {
         assertNotNull(queryResults);
 
         /*
+        -- and uses the DataConnector to obtain raw query data
         -- and parses the returned data
         */
 
