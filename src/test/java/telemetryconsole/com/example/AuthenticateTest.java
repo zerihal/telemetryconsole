@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterAll;
@@ -143,5 +144,28 @@ public class AuthenticateTest {
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
         // scope for this test
+    }
+
+    @Test
+    void testInvalidUserEntry() {
+
+        /*
+         * Similar test to the above, but this time testing for precondition not being met - in reality
+         * this should have been checked beforehand and authentication would not be permitted, but
+         * to test this force a null username and empty password, verify that the are set as such by
+         * Authenticate.set_userDetails and that access level is returned as invalid.
+         */
+
+        String username = null;
+        String password = "";
+
+        authenticate.set_userDetails(new UserDetails(username, password));
+
+        assertNull(authenticate.get_userDetails().getUsername());
+        assertEquals(authenticate.get_userDetails().getPassword(), "");
+
+        currentUser = authenticate.DoAuthentication();
+        AccessLevel currentAccessLevel = currentUser.getAccessLevel();
+        assertEquals(currentAccessLevel, AccessLevel.INVALID);
     }
 }
