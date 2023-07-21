@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Field;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.AccessLevel;
 import telemetryconsole.com.example.Common.User;
+import telemetryconsole.com.example.Common.UserDBConnector;
 import telemetryconsole.com.example.Common.UserDetails;
 import telemetryconsole.com.example.Util.StringHelper;
 
@@ -48,8 +51,8 @@ public class AuthenticateTest {
         -- a username and password have been entered for user
         */
 
-        String username = testUser.getUserDetails().getUsername();
-        String password = testUser.getUserDetails().getPassword();
+        String username = testUser.get_userDetails().getUsername();
+        String password = testUser.get_userDetails().getPassword();
 
         // Check that username and password are not null or empty strings
         assertFalse(StringHelper.IsStringNullOrEmpty(username));
@@ -75,7 +78,21 @@ public class AuthenticateTest {
         -- which creates a new instance of UserDBConnector
         */
 
-        assertNotNull(authenticate.get_userDbConnector());
+        // The UserDBConnector instance is encapsulated in the Authenticate instance as only
+        // really required internally, so for this test use reflection to get the property
+
+        UserDBConnector authUserDBConnector = null;
+
+        try {
+            Field userDBConnectorField = Authenticate.class.getDeclaredField("_userDbConnector");
+            userDBConnectorField.setAccessible(true);
+            authUserDBConnector = (UserDBConnector)userDBConnectorField.get(authenticate);
+        } catch (Exception e) {
+            System.out.println("Reflection exception getting private field - " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        assertNotNull(authUserDBConnector);
     }
 
     @Test
@@ -89,7 +106,7 @@ public class AuthenticateTest {
         */
 
         // Ensure that the user details for Authenticate are set to that of the test user
-        authenticate.set_userDetails(testUser.getUserDetails());
+        authenticate.set_userDetails(testUser.get_userDetails());
 
         // Run the AuthenticateUser method from the Authenticate instance previously created on its own
         // so that we can check that access level is not invalid or none (TelemetryConsole itself handles
@@ -99,14 +116,14 @@ public class AuthenticateTest {
 
         // Check that user existed and password matched - if user did not exist then access level
         // would be AccessLevel.INVALID and if password mismatch then would be AccessLevel.NONE
-        AccessLevel userAccessLevel = currentUser.getAccessLevel();
+        AccessLevel userAccessLevel = currentUser.get_accessLevel();
 
         assertNotEquals(userAccessLevel, AccessLevel.INVALID);
         assertNotEquals(userAccessLevel, AccessLevel.NONE);
 
         // Check that the correct access level has been obtained for the user and linked to the User
         // object that was returned
-        assertEquals(userAccessLevel, testUser.getAccessLevel());
+        assertEquals(userAccessLevel, testUser.get_accessLevel());
 
         /*
         -- and links to self
@@ -132,14 +149,14 @@ public class AuthenticateTest {
         // level of NONE
         authenticate.set_userDetails(new UserDetails("jblogs", "wrongPassword"));
         currentUser = authenticate.DoAuthentication();
-        AccessLevel currentAccessLevel = currentUser.getAccessLevel();
+        AccessLevel currentAccessLevel = currentUser.get_accessLevel();
         assertEquals(currentAccessLevel, AccessLevel.NONE);
 
         // Check authenticating with an invalid username (password irrelevant) - this should return
         // access level of INVALID
         authenticate.set_userDetails(new UserDetails("dodgyUser", "none"));
         currentUser = authenticate.DoAuthentication();
-        currentAccessLevel = currentUser.getAccessLevel();
+        currentAccessLevel = currentUser.get_accessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
@@ -165,7 +182,7 @@ public class AuthenticateTest {
         assertEquals(authenticate.get_userDetails().getPassword(), "");
 
         currentUser = authenticate.DoAuthentication();
-        AccessLevel currentAccessLevel = currentUser.getAccessLevel();
+        AccessLevel currentAccessLevel = currentUser.get_accessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
     }
 }

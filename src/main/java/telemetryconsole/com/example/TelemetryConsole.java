@@ -61,13 +61,13 @@ public class TelemetryConsole {
         // by updating the property in the instance and rerunning DoAuthentication
         set_authenticate(new Authenticate(username, password));
 
-        // Set the user from the do authenticate operation
+        // Set the user from the do authenticate operation (which returns a new instance of User)
         set_currentUser(get_authenticate().DoAuthentication());
 
         // Do UI actions based on returned user - simplified below, but in reality this would perhaps take
         // the user to a new view if authenticated to be able to run queries and perform other actions, including admin
         // including admin functions if they have sufficient access to do so
-        switch(get_currentUser().getAccessLevel()) {
+        switch(get_currentUser().get_accessLevel()) {
 
             case USER:
                 DisplayLoggedOnUser();
@@ -97,7 +97,7 @@ public class TelemetryConsole {
 
         // Ensure current user is authenticated
         if (get_currentUser() != null) {
-            AccessLevel cuAccess = get_currentUser().getAccessLevel();
+            AccessLevel cuAccess = get_currentUser().get_accessLevel();
 
             if (cuAccess == AccessLevel.ADMIN || cuAccess == AccessLevel.USER) {
 
@@ -139,7 +139,7 @@ public class TelemetryConsole {
 
     private void DisplayLoggedOnUser() {
         // Placeholder - this is to display the logged on user in the UI (for now just output though)
-        System.out.println("Logged on user: " + get_currentUser().getUserDetails().getUsername());
+        System.out.println("Logged on user: " + get_currentUser().get_userDetails().getUsername());
     }
 
     private void IncorrectUserPasswordError() {

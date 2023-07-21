@@ -17,4 +17,10 @@ public class UserDBConnector {
         }
         return conn;
     }
+
+    // Override here is just to test reflection
+    @Override 
+    public String toString() {
+        return "UserDBConnector";
+    }
 }

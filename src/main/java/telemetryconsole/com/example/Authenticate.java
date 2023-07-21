@@ -23,10 +23,6 @@ public class Authenticate {
         this._userDetails = _userDetails;
     }
 
-    public UserDBConnector get_userDbConnector() {
-        return _userDbConnector;
-    }
-
     public Authenticate(String username, String password) {
         
         // Create and set a new instance of UserDetails. This has a public setter so if user has entered something
@@ -34,8 +30,8 @@ public class Authenticate {
         // DoAuthentication.
         set_userDetails(new UserDetails(username, password));
 
-        // Create new instance of DB connector. This is really just for this instance of Authenticate, but a getter 
-        // is included for testing purposes. This is required to check the user from the authetication operation
+        // Create new instance of DB connector, which is required to check the user from the authentication operation. 
+        // This is just for this instance of Authenticate, so a private field.
         _userDbConnector = new UserDBConnector();
     }
 
@@ -61,13 +57,13 @@ public class Authenticate {
         return user;
     }
     
-    public AccessLevel CheckUser(UserDetails userDetails) throws UserDbException {
+    private AccessLevel CheckUser(UserDetails userDetails) throws UserDbException {
 
         // Set initial query string for the user DB query
         String sql = "SELECT username, password, accesslevel "
                     + "FROM users WHERE username = ?";
         
-        try (Connection conn = get_userDbConnector().connect();
+        try (Connection conn = _userDbConnector.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             // Set the value in prepared statement for username to that supplied in UserDetails

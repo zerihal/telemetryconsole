@@ -47,7 +47,7 @@ public class QueryTest {
 
         // Create an authenticated test user to check preconditions
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
-        currentUser = new Authenticate(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword()).DoAuthentication();
+        currentUser = new Authenticate(testUser.get_userDetails().getUsername(), testUser.get_userDetails().getPassword()).DoAuthentication();
 
         // Create instance of DeviceParameters to pass to the query. As the data, including the device identifier,
         // in the sample device data DB is dynamically generated from the setup action above, we need to take one
@@ -83,8 +83,8 @@ public class QueryTest {
 
         assertNotNull(currentUser);
 
-        AccessLevel authUserAccess = currentUser.getAccessLevel();
-        AccessLevel expectedAccessLvl = testUser.getAccessLevel();
+        AccessLevel authUserAccess = currentUser.get_accessLevel();
+        AccessLevel expectedAccessLvl = testUser.get_accessLevel();
         assertEquals(authUserAccess, expectedAccessLvl);
 
         /*
