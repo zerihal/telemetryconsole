@@ -15,8 +15,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import telemetryconsole.com.SampleSetup.ISetupSample;
 import telemetryconsole.com.SampleSetup.Sandbox;
 import telemetryconsole.com.SampleSetup.SetupSampleData;
+import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.AccessLevel;
 import telemetryconsole.com.example.Common.DataConnector;
 import telemetryconsole.com.example.Common.DefaultStrings;
@@ -31,8 +33,7 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class QueryTest {
 
-    // Fixture declarations - set as static so they can be re-used between some of the tests that
-    // check parts of the overall operation
+    // Fixture declarations 
     private static User testUser;
     private static DeviceParameters deviceParameters;
     private static String testDeviceIdentifier;
@@ -43,8 +44,18 @@ public class QueryTest {
     public static void setUp() throws Exception {
 
         // Setup sample device data DB
-        SetupSampleData setupSampleData = new SetupSampleData();
+        ISetupSample setupSampleData = new SetupSampleData();
         setupSampleData.RunSetup();
+
+        // Sample user DB may already exist from AuthenticateTest setup (if that was run first) - check this and
+        // if not then create it as also required for this test set
+        if (!Sandbox.DataBaseExists(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
+            System.out.println("Sample users DB required for this test set but does not exist - recreating ...");
+            setupSampleData = new SetupSampleUsers();
+            setupSampleData.RunSetup();
+        } else {
+            System.out.println("Sample users DB found - no recreation required");
+        }
 
         // Create an authenticated test user to check preconditions
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
@@ -73,13 +84,13 @@ public class QueryTest {
         
     }
 
+    // TC4 - Main success scenario for runQuery
     @Test
-    void testQueryConstructor() {
+    void testRunQuery() {
 
         /*
          Precondition:
-         -- the user has been authenticated
-         
+         -- the user has been authenticated        
         */
 
         assertNotNull(currentUser);
@@ -93,12 +104,7 @@ public class QueryTest {
         */
         
         assertNotNull(deviceParameters);;
-        assertFalse(StringHelper.IsStringNullOrEmpty(deviceParameters.getDeviceIdentifier()));
         assertTrue(QueryValidator.IsValidSerialNo(deviceParameters.getDeviceIdentifier()));
-    }
-
-    @Test
-    void testRunQuery() {
 
         /*
         Postcondition:
@@ -146,12 +152,13 @@ public class QueryTest {
         // To test this we'll use the dataConnector instance from the query to obtain another instance of 
         // raw data and call the ParseData* method to verify that it was parsed by checking the date string 
         // to object translation. 
-        // * ParseData is an internal method in Query, so we get a copy of this from TestHelper for testing
-        // purposes for now (although maybe possible with reflection too).
-
+        // * ParseData is an internal method in Query, so we get this from TestHelper which uses reflection or 
+        // a copy for testing purposes.
+        
         ArrayList<Object[]> testDataRaw = dataConnector.GetData(query.getQueryType(), devParams, null);
+
         try {
-            ArrayList<QueryItem> parsedData = TestHelper.ParseDeviceData(testDataRaw);
+            ArrayList<QueryItem> parsedData = TestHelper.ParseDeviceDataInternal(query, testDataRaw);
             SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
             for (int i = 0; i < parsedData.size(); i++) {
@@ -184,6 +191,7 @@ public class QueryTest {
         }
 
         assertEquals(queryItems.size(), testDataRaw.size());
+        assertTrue(queryItems.size() > 0);
 
         /*
         -- and links QueryResults to self
@@ -196,8 +204,28 @@ public class QueryTest {
         // required
 
         assertTrue(true);
-    }    
+    }
+    
+    // TC5 - Precondition not satisfied - unauthorised user
+    @Test
+    void testUnauthenticatedUser() {
 
+        // This precondition is checked in the system class rather than by the runQuery operation, and would
+        // normally relate to a UI option to run a query being disabled if failed. In order to test this at
+        // this point, we need to get the private method from TelemetryConsole for CanRunQuery and set an 
+        // unauthorised user.
+
+        TelemetryConsole telemetryConsole = new TelemetryConsole();
+        UserDetails badUser = new UserDetails("iFake", "password123");
+        telemetryConsole.set_currentUser(new User(badUser, AccessLevel.NONE));
+        DeviceParameters testDevPars = new DeviceParameters(testDeviceIdentifier);
+
+        boolean canQuery = TestHelper.CanRunQueryInternal(telemetryConsole, QueryType.QUERYDEVICE, testDevPars);
+
+        assertFalse(canQuery);
+    }
+
+    // TC6 - Precondition not satisfied - invalid query parameters (device identifier)
     @Test
     void testInvalidQuery() {
 
@@ -211,5 +239,29 @@ public class QueryTest {
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
         // scope for this test
+    }
+
+    // TC7 - Postcondition not satisfied - no results found for device
+    @Test
+    void testNoResults() {
+
+        // When the sample data DB is setup, device identifers are randomly generated starting with S (to be 
+        // valid), but are all 10 alphanumeric characters long, so to ensure one that will never be in the
+        // DB, we create one with 11 characters for this test
+        String noEntriesDeviceIdent = "S123456789E";
+        DeviceParameters devPars = new DeviceParameters(noEntriesDeviceIdent);
+
+        Query query = new Query(currentQueryType, devPars);
+
+        QueryResults queryResults = null;
+
+        try {
+            queryResults = query.ExecuteQuery();
+        } catch (ParseDataException e) {
+            // Use a simple assert null check on the exception to fail the test if thrown
+            assertNull(e, "Unexpected parse data exception");
+        }
+
+        assertTrue(queryResults.getQueryItems().size() == 0);
     }
 }

@@ -1,5 +1,6 @@
 package telemetryconsole.com.SampleSetup;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -166,5 +167,10 @@ public class Sandbox {
         }
 
         return ident;
+    }
+
+    public static Boolean DataBaseExists(String dbFilePath) {
+        File dbFile = new File(dbFilePath);
+        return dbFile.exists() && !dbFile.isDirectory();
     }
 }

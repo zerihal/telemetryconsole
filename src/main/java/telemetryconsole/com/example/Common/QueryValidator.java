@@ -6,7 +6,7 @@ public final class QueryValidator {
     
     public static boolean IsValidSerialNo(String serialNumber) {
         // Simple implementation - may be more to be added for this check
-        return serialNumber.startsWith("S");
+        return serialNumber != null && serialNumber.startsWith("S");
     }
 
     public static boolean IsValidDateRange(Date fromDate, Date toDate) {

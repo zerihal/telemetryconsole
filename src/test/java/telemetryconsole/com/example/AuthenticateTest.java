@@ -1,10 +1,10 @@
 package telemetryconsole.com.example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
@@ -15,18 +15,15 @@ import org.junit.jupiter.api.Test;
 
 import telemetryconsole.com.SampleSetup.SetupSampleUsers;
 import telemetryconsole.com.example.Common.AccessLevel;
+import telemetryconsole.com.example.Common.InvalidUserDetailsException;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDBConnector;
 import telemetryconsole.com.example.Common.UserDetails;
-import telemetryconsole.com.example.Util.StringHelper;
 
 public class AuthenticateTest {
 
-    // Fixture declarations - set as static so they can be re-used between some of the tests that
-    // check parts of the overall operation
+    // Fixture declarations
     private static User testUser;
-    private static Authenticate authenticate;
-    private static User currentUser;
 
     @BeforeAll
     static void setUp() {
@@ -34,7 +31,9 @@ public class AuthenticateTest {
         setupSampleUser.RunSetup();
 
         // Create a test user - this is what should be created by the Authenticate operations. The one created
-        // manually below is to be used to verify the operations and contracts.
+        // manually below is to be used to verify the operations and contracts, however this user is one that
+        // is present in the users DB that was created by the setup methods above so can be used to test the
+        // authentication method to verify that correct access level is returned from the username and password.
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
     }
 
@@ -43,20 +42,31 @@ public class AuthenticateTest {
         
     }
 
+    // TC1 - Main success scenario for authenticateUser
     @Test
-    void testAuthenticateConstructor() {
+    void testAuthenticateUser() {
 
         /* 
         Precondition:
         -- a username and password have been entered for user
         */
 
+        // Create new instance of Authenticate for the test user
         String username = testUser.get_userDetails().getUsername();
         String password = testUser.get_userDetails().getPassword();
 
-        // Check that username and password are not null or empty strings
-        assertFalse(StringHelper.IsStringNullOrEmpty(username));
-        assertFalse(StringHelper.IsStringNullOrEmpty(password));
+        Authenticate authenticate = null;
+        InvalidUserDetailsException userEx = null;
+        
+        try {
+            authenticate = new Authenticate(username, password);
+        } catch (InvalidUserDetailsException e) {
+            userEx = e;
+        }
+
+        // Check that invalid user details exception was not thrown (i.e. username
+        // and password were not null or empty strings)
+        assertNull(userEx);
 
         /*
         Postcondition:
@@ -64,15 +74,9 @@ public class AuthenticateTest {
         -- and is linked to a new instance of Authenticate
         */
 
-        // Create new instance of Authenticate       
-        authenticate = new Authenticate(username, password);
-
-        // Check that an instance of UserDetails has been created from the constructor and
-        // this has been correctly created from the username and password that were passed
-        // in from testUser
-        assertNotNull(authenticate.get_userDetails());
-        assertEquals(username, authenticate.get_userDetails().getUsername());
-        assertEquals(password, authenticate.get_userDetails().getPassword());
+        // Check UserDetails instance is set in the new Authenticate instance (i.e.
+        // should not be null)
+        assertNotNull(authenticate.get_userDetails());        
 
         /*
         -- which creates a new instance of UserDBConnector
@@ -93,10 +97,6 @@ public class AuthenticateTest {
         }
 
         assertNotNull(authUserDBConnector);
-    }
-
-    @Test
-    void testAuthenticateUser() {
 
         /*
         Postcondition:
@@ -105,14 +105,11 @@ public class AuthenticateTest {
         -- and creates new instance of User with access level set
         */
 
-        // Ensure that the user details for Authenticate are set to that of the test user
-        authenticate.set_userDetails(testUser.get_userDetails());
-
         // Run the AuthenticateUser method from the Authenticate instance previously created on its own
         // so that we can check that access level is not invalid or none (TelemetryConsole itself handles
         // this but this is in order to check the handled results that would mean that CurrentUser is not
         // set)
-        currentUser = authenticate.DoAuthentication();
+        User currentUser = authenticate.DoAuthentication();
 
         // Check that user existed and password matched - if user did not exist then access level
         // would be AccessLevel.INVALID and if password mismatch then would be AccessLevel.NONE
@@ -138,17 +135,46 @@ public class AuthenticateTest {
         assertTrue(true);
     }
 
+    // TC2 - Precondition not satisfied - Missing username or password
     @Test
-    void testUnauthorisedUser() {
+    void testInvalidUserEntry() {
+
+        /*
+         * Check that passing a null username and empty password (could be any combination of null, empty or 
+         * white space in either though) that an InvalidUserDetailsException is thrown when trying to create
+         * an instance of Authenticate. In reality this might be checked beforehand in the UI with a "login"
+         * button only enabled as appropriate, but may still be useful to throw for testing purposes.
+         */
+
+        String username = null;
+        String password = "";
+
+        InvalidUserDetailsException e = assertThrows(InvalidUserDetailsException.class, () -> {
+            new Authenticate(username, password);
+        });
+
+        String exMessage = e.getMessage();
+        System.out.println("Invalid user details exception message (expected):\r\n" + exMessage);
+
+        assertTrue(exMessage.contains("Invalid user details"));
+    }
+
+    // TC3 - Postcondition not satisfied - user does not exist or incorrect password
+    @Test
+    void testUnauthorisedUser() throws InvalidUserDetailsException {
         
         /*
         Extension - The user is not authorised to use the system and is advised
         */
 
+        // Note: For both the below we are entering something for username and password so no need to 
+        // handle any potential InvalidUserDetailsException - just added throws from method declaration 
+        // to allow to compile
+
         // Check authenticating with a valid username but invalid password - this should return access
         // level of NONE
-        authenticate.set_userDetails(new UserDetails("jblogs", "wrongPassword"));
-        currentUser = authenticate.DoAuthentication();
+        Authenticate authenticate = new Authenticate("jblogs", "wrongassword");
+        User currentUser = authenticate.DoAuthentication();
         AccessLevel currentAccessLevel = currentUser.get_accessLevel();
         assertEquals(currentAccessLevel, AccessLevel.NONE);
 
@@ -161,28 +187,5 @@ public class AuthenticateTest {
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
         // scope for this test
-    }
-
-    @Test
-    void testInvalidUserEntry() {
-
-        /*
-         * Similar test to the above, but this time testing for precondition not being met - in reality
-         * this should have been checked beforehand and authentication would not be permitted, but
-         * to test this force a null username and empty password, verify that the are set as such by
-         * Authenticate.set_userDetails and that access level is returned as invalid.
-         */
-
-        String username = null;
-        String password = "";
-
-        authenticate.set_userDetails(new UserDetails(username, password));
-
-        assertNull(authenticate.get_userDetails().getUsername());
-        assertEquals(authenticate.get_userDetails().getPassword(), "");
-
-        currentUser = authenticate.DoAuthentication();
-        AccessLevel currentAccessLevel = currentUser.get_accessLevel();
-        assertEquals(currentAccessLevel, AccessLevel.INVALID);
     }
 }

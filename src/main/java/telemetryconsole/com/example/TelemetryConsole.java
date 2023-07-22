@@ -2,11 +2,11 @@ package telemetryconsole.com.example;
 
 import telemetryconsole.com.example.Common.AccessLevel;
 import telemetryconsole.com.example.Common.DeviceParameters;
+import telemetryconsole.com.example.Common.InvalidUserDetailsException;
 import telemetryconsole.com.example.Common.ParseDataException;
 import telemetryconsole.com.example.Common.QueryParameters;
 import telemetryconsole.com.example.Common.QueryType;
 import telemetryconsole.com.example.Common.QueryValidator;
-import telemetryconsole.com.example.Common.UnauthorisedUserException;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Util.StringHelper;
 
@@ -42,20 +42,7 @@ public class TelemetryConsole {
 
     public TelemetryConsole() {}
 
-    public Boolean CanAuthenticate(String username, String password) {
-        // If username or password have not been entered then display an error and return as authentication 
-        // cannot be done. In the UI this would probably act to enable or disable a "login" or "authenticate"
-        // button
-        if (StringHelper.IsStringNullOrEmpty(username) || StringHelper.IsStringNullOrEmpty(password)) {
-            EnableAuthenticateUser(false);
-            return false;
-        } else {
-            EnableAuthenticateUser(true);
-            return true;
-        }
-    }
-
-    public void AuthenticateUser(String username, String password) {
+    public void AuthenticateUser(String username, String password) throws InvalidUserDetailsException {
 
         // Create instance of Authenticate - this can be reused should incorrect user details be entered
         // by updating the property in the instance and rerunning DoAuthentication
@@ -91,9 +78,35 @@ public class TelemetryConsole {
         }
     }
 
-    public Boolean CanRunQuery(QueryType queryType, QueryParameters queryParams) {
+    public void RunQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException {
         
-        Boolean canRunQuery = false;
+        // Create Query instance
+        Query query = new Query(queryType, queryParams);
+
+        // Execute the query and set results
+        set_currentQueryResults(query.ExecuteQuery());
+
+        // Placeholder - further UI actions (if appropriate here)
+    }
+
+    // Placeholder method for the UI to enable/disable login button
+    @SuppressWarnings("unused")
+    private boolean CanAuthenticate(String username, String password) {
+
+        if (StringHelper.IsStringNullOrEmpty(username) || StringHelper.IsStringNullOrEmpty(password)) {
+            EnableAuthenticateUser(false);
+            return false;
+        } else {
+            EnableAuthenticateUser(true);
+            return true;
+        }
+    }
+
+    // Placeholder method for UI to enable/disable run query button(s)
+    @SuppressWarnings("unused")
+    private boolean CanRunQuery(QueryType queryType, QueryParameters queryParams) {
+        
+        boolean canRunQuery = false;
 
         // Ensure current user is authenticated
         if (get_currentUser() != null) {
@@ -116,17 +129,6 @@ public class TelemetryConsole {
 
         EnableRunQuery(canRunQuery);
         return canRunQuery;
-    }
-
-    public void RunQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException, UnauthorisedUserException {
-        
-        // Create Query instance
-        Query query = new Query(queryType, queryParams);
-
-        // Execute the query and set results
-        set_currentQueryResults(query.ExecuteQuery());
-
-        // Placeholder - further UI actions (if appropriate here)
     }
 
     private void EnableRunQuery(Boolean canRunQuery) {

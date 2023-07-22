@@ -7,11 +7,8 @@ public class UnauthorisedUserException extends Exception {
         return _userAccessLevel;
     }
 
-    public void setUserAccessLevel(AccessLevel _userAccessLevel) {
-        this._userAccessLevel = _userAccessLevel;
-    }
-
     public UnauthorisedUserException(AccessLevel accessLevel) {
-        setUserAccessLevel(accessLevel);
+        super("Unauthorised user exception");
+        _userAccessLevel = accessLevel;
     }
 }

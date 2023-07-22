@@ -5,10 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import telemetryconsole.com.example.Common.AccessLevel;
+import telemetryconsole.com.example.Common.InvalidUserDetailsException;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDBConnector;
 import telemetryconsole.com.example.Common.UserDbException;
 import telemetryconsole.com.example.Common.UserDetails;
+import telemetryconsole.com.example.Util.StringHelper;
 
 public class Authenticate {
 
@@ -23,8 +25,12 @@ public class Authenticate {
         this._userDetails = _userDetails;
     }
 
-    public Authenticate(String username, String password) {
+    public Authenticate(String username, String password) throws InvalidUserDetailsException {
         
+        if (StringHelper.IsStringNullOrEmpty(username) || StringHelper.IsStringNullOrEmpty(password)) {
+            throw new InvalidUserDetailsException(username, password);
+        }
+
         // Create and set a new instance of UserDetails. This has a public setter so if user has entered something
         // incorrectly then this instance of Authenticate can be reused by just updating UserDetails and rerunning 
         // DoAuthentication.
