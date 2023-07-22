@@ -71,13 +71,13 @@ public class Query {
             _dataConnector = new DataConnector();
 
         // Query data source to obtain raw data
-        ArrayList<Object[]> rawQueryData = get_dataConnector().getData(getQueryType(), getQueryParameters(), get_queryFilter());
+        ArrayList<Object[]> rawQueryData = get_dataConnector().GetData(getQueryType(), getQueryParameters(), get_queryFilter());
 
         // Parse results to obtain collection of Device objects
         ArrayList<QueryItem> devices = null;
         
         try {
-            devices = ParseData(rawQueryData);
+            devices = ParseDeviceData(rawQueryData);
         } catch (ParseException e) {
             throw new ParseDataException();
         } catch (ParseDataException parseDataException) {
@@ -91,13 +91,10 @@ public class Query {
         return queryResults;
     }
 
-    public ArrayList<QueryItem> ParseData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
+    private ArrayList<QueryItem> ParseDeviceData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
 
         // Parse the raw data and convert date strings to date format and status to the appropriate enum values before
         // creating a new Device (QueryItem) object for each entry and returning all as a new collection.
-        // Note: This currently just handles the Device QueryType implementation, so would need to be updated or 
-        // done a bit differently for other implementations - perhaps something like a DataParser interface that could
-        // be appropriately created according to the QueryType
 
         ArrayList<QueryItem> devices = new ArrayList<QueryItem>();
         SimpleDateFormat dtFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -119,5 +116,12 @@ public class Query {
         }
 
         return devices;
+    }
+
+    @SuppressWarnings("unused")
+    private ArrayList<QueryItem> ParseAppData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
+        
+        // Not implemented yet
+        return null;
     }
 }

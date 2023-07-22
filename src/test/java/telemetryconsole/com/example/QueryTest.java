@@ -26,6 +26,7 @@ import telemetryconsole.com.example.Common.QueryType;
 import telemetryconsole.com.example.Common.QueryValidator;
 import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Common.UserDetails;
+import telemetryconsole.com.example.TestHelpers.TestHelper;
 import telemetryconsole.com.example.Util.StringHelper;
 
 public class QueryTest {
@@ -143,13 +144,14 @@ public class QueryTest {
         */
 
         // To test this we'll use the dataConnector instance from the query to obtain another instance of 
-        // raw data and call the ParseData method to verify that it was parsed by checking the date string 
+        // raw data and call the ParseData* method to verify that it was parsed by checking the date string 
         // to object translation. 
-        // Note that this is all done within the RunQuery method in normal operation
+        // * ParseData is an internal method in Query, so we get a copy of this from TestHelper for testing
+        // purposes for now (although maybe possible with reflection too).
 
-        ArrayList<Object[]> testDataRaw = dataConnector.getData(query.getQueryType(), devParams, null);
+        ArrayList<Object[]> testDataRaw = dataConnector.GetData(query.getQueryType(), devParams, null);
         try {
-            ArrayList<QueryItem> parsedData = query.ParseData(testDataRaw);
+            ArrayList<QueryItem> parsedData = TestHelper.ParseDeviceData(testDataRaw);
             SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
             for (int i = 0; i < parsedData.size(); i++) {
