@@ -66,7 +66,7 @@ public class DataConnector {
                 break;
         }
 
-        // ToDo: Apply additional query filters if applicable (not yet implemented)
+        // Placeholder for application of additional query filters if applicable (not yet implemented)
         if (queryFilter != null)
         {
             // ...
