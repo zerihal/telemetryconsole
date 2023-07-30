@@ -108,7 +108,7 @@ public class QueryTest {
 
         /*
         Postcondition:
-        -- creates query based on QueryType of queryDevice and deviceParameters.deviceIdentifier
+        -- creates query based on QueryType and DeviceParameters
         */
 
         // Check that the correct instance of Query has been created with appropriate implementation
@@ -174,7 +174,7 @@ public class QueryTest {
         }
 
         /*
-        -- and creates new instances of Device (QueryItem) for data entry
+        -- and creates new instances of Device (QueryItem) for data entries
         -- and creates a new instance of QueryResults
         -- which is linked to the created instances of Device 
         */
