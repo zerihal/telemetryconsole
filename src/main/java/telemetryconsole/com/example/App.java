@@ -2,7 +2,6 @@ package telemetryconsole.com.example;
 
 /**
  * App - Telemetry Console
- *
  */
 public class App 
 {
