@@ -4,8 +4,8 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class InvalidUserDetailsException extends Exception {
 
-    String _username;
-    String _password;
+    String username;
+    String password;
 
     @Override
     public String getMessage() {
@@ -14,11 +14,11 @@ public class InvalidUserDetailsException extends Exception {
 
         sb.append("Invalid user details:");
 
-        if (StringHelper.IsStringNullOrEmpty(_username)) {
+        if (StringHelper.isStringNullOrEmpty(username)) {
             sb.append("\r\nUsername is null or empty");
         }
 
-        if (StringHelper.IsStringNullOrEmpty(_password)) {
+        if (StringHelper.isStringNullOrEmpty(password)) {
             sb.append("\r\nPassword is null or empty");
         }
 
@@ -26,7 +26,7 @@ public class InvalidUserDetailsException extends Exception {
     }
     
     public InvalidUserDetailsException(String username, String password) {
-        _username = username;
-        _password = password;
+        this.username = username;
+        this.password = password;
     }
 }

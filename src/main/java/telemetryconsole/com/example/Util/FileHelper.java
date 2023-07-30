@@ -9,7 +9,7 @@ public final class FileHelper {
      * If the file does not exist or is not a file then there is nothing to delete and
      * this will just return true.
      */
-    public static Boolean DeleteFile(String fileNameAndPath) {
+    public static Boolean deleteFile(String fileNameAndPath) {
         File file = new File(fileNameAndPath);
 
         if (!file.exists() || file.isDirectory())

@@ -28,7 +28,7 @@ public class AuthenticateTest {
     @BeforeAll
     static void setUp() {
         SetupSampleUsers setupSampleUser = new SetupSampleUsers();
-        setupSampleUser.RunSetup();
+        setupSampleUser.runSetup();
 
         // Create a test user - this is what should be created by the Authenticate operations. The one created
         // manually below is to be used to verify the operations and contracts, however this user is one that
@@ -52,8 +52,8 @@ public class AuthenticateTest {
         */
 
         // Create new instance of Authenticate for the test user
-        String username = testUser.get_userDetails().getUsername();
-        String password = testUser.get_userDetails().getPassword();
+        String username = testUser.getUserDetails().getUsername();
+        String password = testUser.getUserDetails().getPassword();
 
         Authenticate authenticate = null;
         InvalidUserDetailsException userEx = null;
@@ -76,7 +76,7 @@ public class AuthenticateTest {
 
         // Check UserDetails instance is set in the new Authenticate instance (i.e.
         // should not be null)
-        assertNotNull(authenticate.get_userDetails());        
+        assertNotNull(authenticate.getUserDetails());        
 
         /*
         -- which creates a new instance of UserDBConnector
@@ -88,7 +88,7 @@ public class AuthenticateTest {
         UserDBConnector authUserDBConnector = null;
 
         try {
-            Field userDBConnectorField = Authenticate.class.getDeclaredField("_userDbConnector");
+            Field userDBConnectorField = Authenticate.class.getDeclaredField("userDbConnector");
             userDBConnectorField.setAccessible(true);
             authUserDBConnector = (UserDBConnector)userDBConnectorField.get(authenticate);
         } catch (Exception e) {
@@ -105,29 +105,29 @@ public class AuthenticateTest {
         -- and creates new instance of User with access level set
         */
 
-        // Run the AuthenticateUser method from the Authenticate instance previously created on its own
+        // Run the doAuthentication method from the Authenticate instance previously created on its own
         // so that we can check that access level is not invalid or none (TelemetryConsole itself handles
         // this but this is in order to check the handled results that would mean that CurrentUser is not
         // set)
-        User currentUser = authenticate.DoAuthentication();
+        User currentUser = authenticate.doAuthentication();
 
         // Check that user existed and password matched - if user did not exist then access level
         // would be AccessLevel.INVALID and if password mismatch then would be AccessLevel.NONE
-        AccessLevel userAccessLevel = currentUser.get_accessLevel();
+        AccessLevel userAccessLevel = currentUser.getAccessLevel();
 
         assertNotEquals(userAccessLevel, AccessLevel.INVALID);
         assertNotEquals(userAccessLevel, AccessLevel.NONE);
 
         // Check that the correct access level has been obtained for the user and linked to the User
         // object that was returned
-        assertEquals(userAccessLevel, testUser.get_accessLevel());
+        assertEquals(userAccessLevel, testUser.getAccessLevel());
 
         /*
         -- and links to self
         */
 
         // If all above subtests have passed then we have an instance of User from running 
-        // AuthenticateUser(), which would then be linked back to the caller (TelemetryConsole), 
+        // authenticateUser(), which would then be linked back to the caller (TelemetryConsole), 
         // however as this is just a test on the operation, there is nothing to link it to. As such, 
         // this is just included for completeness and passed based on the fact that the valid object 
         // could be returned as required
@@ -174,15 +174,15 @@ public class AuthenticateTest {
         // Check authenticating with a valid username but invalid password - this should return access
         // level of NONE
         Authenticate authenticate = new Authenticate("jblogs", "wrongassword");
-        User currentUser = authenticate.DoAuthentication();
-        AccessLevel currentAccessLevel = currentUser.get_accessLevel();
+        User currentUser = authenticate.doAuthentication();
+        AccessLevel currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.NONE);
 
         // Check authenticating with an invalid username (password irrelevant) - this should return
         // access level of INVALID
-        authenticate.set_userDetails(new UserDetails("dodgyUser", "none"));
-        currentUser = authenticate.DoAuthentication();
-        currentAccessLevel = currentUser.get_accessLevel();
+        authenticate.setUserDetails(new UserDetails("dodgyUser", "none"));
+        currentUser = authenticate.doAuthentication();
+        currentAccessLevel = currentUser.getAccessLevel();
         assertEquals(currentAccessLevel, AccessLevel.INVALID);
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 

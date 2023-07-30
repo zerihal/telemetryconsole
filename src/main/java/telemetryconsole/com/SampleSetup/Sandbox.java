@@ -14,7 +14,7 @@ import telemetryconsole.com.example.Common.DefaultStrings;
 
 public class Sandbox {
 
-    private static Connection Connect(String dbName) {
+    private static Connection connect(String dbName) {
         // SQLite connection string
         String url = DefaultStrings.SQLiteDBPath + dbName;
         Connection conn = null;
@@ -26,7 +26,7 @@ public class Sandbox {
         return conn;
     }
     
-    public static void CreateNewDatabase(String fileName) {
+    public static void createNewDatabase(String fileName) {
         
         String url = DefaultStrings.SQLiteDBPath + fileName;
 
@@ -43,7 +43,7 @@ public class Sandbox {
         }
     }
 
-    public static void CreateNewTable(String dbFileName, String sql) {
+    public static void createNewTable(String dbFileName, String sql) {
         // SQLite connection string
         String url = DefaultStrings.SQLiteDBPath + dbFileName;
         
@@ -60,10 +60,10 @@ public class Sandbox {
         }
     }
 
-    public static void InsertUser(String dbName, String username, String password, int accesslevel) {
+    public static void insertUser(String dbName, String username, String password, int accesslevel) {
         String sql = "INSERT INTO users(username,password,accesslevel) VALUES(?,?,?)";
 
-        try (Connection conn = Connect(dbName);
+        try (Connection conn = connect(dbName);
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
@@ -77,10 +77,10 @@ public class Sandbox {
         }
     }
 
-    public static void InsertDeviceData(String dbName, String dateLogged, String devIdentifier, String deviceName, String deviceTypeName, int status) {
+    public static void insertDeviceData(String dbName, String dateLogged, String devIdentifier, String deviceName, String deviceTypeName, int status) {
         String sql = "INSERT INTO loggeddata(datelogged,deviceidentifier,devicename,devicetypename,devicestatus) VALUES(?,?,?,?,?)";
 
-        try (Connection conn = Connect(dbName);
+        try (Connection conn = connect(dbName);
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, dateLogged);
             pstmt.setString(2, devIdentifier);
@@ -96,10 +96,10 @@ public class Sandbox {
         }
     }
 
-    public static void SelectAllUsers(String dbName){
+    public static void selectAllUsers(String dbName){
         String sql = "SELECT id, username, password, accesslevel FROM users";
         
-        try (Connection conn = Connect(dbName);
+        try (Connection conn = connect(dbName);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             
@@ -118,10 +118,10 @@ public class Sandbox {
         }
     }
 
-    public static void SelectAllDevices(String dbName){
+    public static void selectAllDevices(String dbName){
         String sql = "SELECT id, datelogged, deviceidentifier, devicename, devicetypename, devicestatus FROM loggeddata";
         
-        try (Connection conn = Connect(dbName);
+        try (Connection conn = connect(dbName);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             
@@ -142,13 +142,13 @@ public class Sandbox {
         }
     }
 
-    public static String SelectRandomDeviceIdentifier(String dbName){
+    public static String selectRandomDeviceIdentifier(String dbName){
         String sql = "SELECT deviceidentifier FROM loggeddata";
         Random rand = new Random();
         int randomRow = rand.nextInt(98) + 1;
         String ident = "";
         
-        try (Connection conn = Connect(dbName);
+        try (Connection conn = connect(dbName);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             
@@ -169,7 +169,7 @@ public class Sandbox {
         return ident;
     }
 
-    public static Boolean DataBaseExists(String dbFilePath) {
+    public static Boolean dataBaseExists(String dbFilePath) {
         File dbFile = new File(dbFilePath);
         return dbFile.exists() && !dbFile.isDirectory();
     }

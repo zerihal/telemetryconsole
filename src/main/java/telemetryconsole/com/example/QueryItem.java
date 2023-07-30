@@ -3,13 +3,13 @@ package telemetryconsole.com.example;
 import java.util.Date;
 
 public abstract class QueryItem {
-    private Date _dateLogged;
+    private Date dateLogged;
 
-    public Date get_dateLogged() {
-        return _dateLogged;
+    public Date getDateLogged() {
+        return dateLogged;
     }
 
-    public void set_dateLogged(Date _dateLogged) {
-        this._dateLogged = _dateLogged;
+    public void setDateLogged(Date dateLogged) {
+        this.dateLogged = dateLogged;
     }
 }

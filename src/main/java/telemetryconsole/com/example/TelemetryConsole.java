@@ -12,65 +12,65 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class TelemetryConsole {
     
-    private User _currentUser;
-    private Authenticate _authenticate;
-    private QueryResults _currentQueryResults;
+    private User currentUser;
+    private Authenticate authenticate;
+    private QueryResults currentQueryResults;
 
-    public User get_currentUser() {
-        return _currentUser;
+    public User getCurrentUser() {
+        return currentUser;
     }
 
-    public void set_currentUser(User user) {
-        this._currentUser = user;
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
     }
 
-    public Authenticate get_authenticate() {
-        return _authenticate;
+    public Authenticate getAuthenticate() {
+        return authenticate;
     }
 
-    public void set_authenticate(Authenticate _authenticate) {
-        this._authenticate = _authenticate;
+    public void setAuthenticate(Authenticate _authenticate) {
+        this.authenticate = _authenticate;
     }
 
-    public QueryResults get_currentQueryResults() {
-        return _currentQueryResults;
+    public QueryResults getCurrentQueryResults() {
+        return currentQueryResults;
     }
 
-    public void set_currentQueryResults(QueryResults _currentQueryResults) {
-        this._currentQueryResults = _currentQueryResults;
+    public void setCurrentQueryResults(QueryResults _currentQueryResults) {
+        this.currentQueryResults = _currentQueryResults;
     }
 
     public TelemetryConsole() {}
 
-    public void AuthenticateUser(String username, String password) throws InvalidUserDetailsException {
+    public void authenticateUser(String username, String password) throws InvalidUserDetailsException {
 
         // Create instance of Authenticate - this can be reused should incorrect user details be entered
         // by updating the property in the instance and rerunning DoAuthentication
-        set_authenticate(new Authenticate(username, password));
+        setAuthenticate(new Authenticate(username, password));
 
         // Set the user from the do authenticate operation (which returns a new instance of User)
-        set_currentUser(get_authenticate().DoAuthentication());
+        setCurrentUser(getAuthenticate().doAuthentication());
 
         // Do UI actions based on returned user - simplified below, but in reality this would perhaps take
         // the user to a new view if authenticated to be able to run queries and perform other actions, including admin
         // including admin functions if they have sufficient access to do so
-        switch(get_currentUser().get_accessLevel()) {
+        switch(getCurrentUser().getAccessLevel()) {
 
             case USER:
-                DisplayLoggedOnUser();
+                displayLoggedOnUser();
                 break;
 
             case ADMIN:
-                DisplayLoggedOnUser();
+                displayLoggedOnUser();
                 // Placeholder - Display admin options on console
                 break;
 
             case NONE:
-                IncorrectUserPasswordError();
+                incorrectUserPasswordError();
                 break;
 
             case INVALID:
-                InvalidUserError();
+                invalidUserError();
                 break;
 
             default:
@@ -78,39 +78,39 @@ public class TelemetryConsole {
         }
     }
 
-    public void RunQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException {
+    public void runQuery(QueryType queryType, QueryParameters queryParams) throws ParseDataException {
         
         // Create Query instance
         Query query = new Query(queryType, queryParams);
 
         // Execute the query and set results
-        set_currentQueryResults(query.ExecuteQuery());
+        setCurrentQueryResults(query.executeQuery());
 
         // Placeholder - further UI actions (if appropriate here)
     }
 
     // Placeholder method for the UI to enable/disable login button
     @SuppressWarnings("unused")
-    private boolean CanAuthenticate(String username, String password) {
+    private boolean canAuthenticate(String username, String password) {
 
-        if (StringHelper.IsStringNullOrEmpty(username) || StringHelper.IsStringNullOrEmpty(password)) {
-            EnableAuthenticateUser(false);
+        if (StringHelper.isStringNullOrEmpty(username) || StringHelper.isStringNullOrEmpty(password)) {
+            enableAuthenticateUser(false);
             return false;
         } else {
-            EnableAuthenticateUser(true);
+            enableAuthenticateUser(true);
             return true;
         }
     }
 
     // Placeholder method for UI to enable/disable run query button(s)
     @SuppressWarnings("unused")
-    private boolean CanRunQuery(QueryType queryType, QueryParameters queryParams) {
+    private boolean canRunQuery(QueryType queryType, QueryParameters queryParams) {
         
         boolean canRunQuery = false;
 
         // Ensure current user is authenticated
-        if (get_currentUser() != null) {
-            AccessLevel cuAccess = get_currentUser().get_accessLevel();
+        if (getCurrentUser() != null) {
+            AccessLevel cuAccess = getCurrentUser().getAccessLevel();
 
             if (cuAccess == AccessLevel.ADMIN || cuAccess == AccessLevel.USER) {
 
@@ -118,7 +118,7 @@ public class TelemetryConsole {
 
                     // This is a query for a specific device so check that the device identifier is valid
                     if (queryParams != null && queryParams instanceof DeviceParameters) {
-                        canRunQuery = QueryValidator.IsValidSerialNo(((DeviceParameters)queryParams).getDeviceIdentifier());
+                        canRunQuery = QueryValidator.isValidSerialNo(((DeviceParameters)queryParams).getDeviceIdentifier());
                     }           
                 }
                 else {
@@ -127,29 +127,29 @@ public class TelemetryConsole {
             }
         }
 
-        EnableRunQuery(canRunQuery);
+        enableRunQuery(canRunQuery);
         return canRunQuery;
     }
 
-    private void EnableRunQuery(Boolean canRunQuery) {
+    private void enableRunQuery(Boolean canRunQuery) {
         // Placeholder - enable the run query button
     }
 
-    private void EnableAuthenticateUser(Boolean canAuthenticate) {
+    private void enableAuthenticateUser(Boolean canAuthenticate) {
         // Placeholder - enable the authenticate / login button
     }
 
-    private void DisplayLoggedOnUser() {
+    private void displayLoggedOnUser() {
         // Placeholder - this is to display the logged on user in the UI (for now just output though)
-        System.out.println("Logged on user: " + get_currentUser().get_userDetails().getUsername());
+        System.out.println("Logged on user: " + getCurrentUser().getUserDetails().getUsername());
     }
 
-    private void IncorrectUserPasswordError() {
+    private void incorrectUserPasswordError() {
         // Placeholder - this is to display incorrect password error/prompt in the UI (for now just output though)
         System.out.println("Incorrect password!");
     }
 
-    private void InvalidUserError() {
+    private void invalidUserError() {
         // Placeholder - this is to display invalid user warning/prompt in the UI (for now just output though)
         System.out.println("Invalid user!");
     }

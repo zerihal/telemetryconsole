@@ -29,7 +29,7 @@ public class TestHelper {
     public static ArrayList<QueryItem> ParseDeviceDataInternal(Query queryInstance, ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
         
         try {
-            Method meth = queryInstance.getClass().getDeclaredMethod("ParseDeviceData", ArrayList.class);
+            Method meth = queryInstance.getClass().getDeclaredMethod("parseDeviceData", ArrayList.class);
             meth.setAccessible(true);
 
             @SuppressWarnings("unchecked")
@@ -42,7 +42,7 @@ public class TestHelper {
             // Don't do anything here, we'll just use the fallback copy method
         }
 
-        return ParseDeviceDataCopy(resultSet);
+        return parseDeviceDataCopy(resultSet);
     }
 
     /**
@@ -53,20 +53,20 @@ public class TestHelper {
     public static boolean CanRunQueryInternal(TelemetryConsole telemetryConsole, QueryType queryType, QueryParameters queryParams) {
 
         try {
-            Method privateCanQueryMeth = telemetryConsole.getClass().getDeclaredMethod("CanRunQuery", QueryType.class, QueryParameters.class);
+            Method privateCanQueryMeth = telemetryConsole.getClass().getDeclaredMethod("canRunQuery", QueryType.class, QueryParameters.class);
             privateCanQueryMeth.setAccessible(true);
             return (boolean)privateCanQueryMeth.invoke(telemetryConsole, queryType, queryParams);
         } catch (Exception e) {
             // Don't do anything here, we'll just use the fallback copy method
         }
 
-        return CanRunQueryCopy(queryType, queryParams, telemetryConsole.get_currentUser());
+        return canRunQueryCopy(queryType, queryParams, telemetryConsole.getCurrentUser());
     }
     
     /**
     * Copy of the internal ParseDeviceData method in Query for testing purposes.
     */
-    private static ArrayList<QueryItem> ParseDeviceDataCopy(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
+    private static ArrayList<QueryItem> parseDeviceDataCopy(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
 
         ArrayList<QueryItem> devices = new ArrayList<QueryItem>();
         SimpleDateFormat dtFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -93,13 +93,13 @@ public class TestHelper {
     /**
     * Copy of the internal CanRunQuery method in TelemetryConsole for testing purposes (with additional User arg).
     */
-    private static boolean CanRunQueryCopy(QueryType queryType, QueryParameters queryParams, User currentUser) {
+    private static boolean canRunQueryCopy(QueryType queryType, QueryParameters queryParams, User currentUser) {
         
         boolean canRunQuery = false;
 
         // Ensure current user is authenticated
         if (currentUser != null) {
-            AccessLevel cuAccess = currentUser.get_accessLevel();
+            AccessLevel cuAccess = currentUser.getAccessLevel();
 
             if (cuAccess == AccessLevel.ADMIN || cuAccess == AccessLevel.USER) {
 
@@ -107,7 +107,7 @@ public class TestHelper {
 
                     // This is a query for a specific device so check that the device identifier is valid
                     if (queryParams != null && queryParams instanceof DeviceParameters) {
-                        canRunQuery = QueryValidator.IsValidSerialNo(((DeviceParameters)queryParams).getDeviceIdentifier());
+                        canRunQuery = QueryValidator.isValidSerialNo(((DeviceParameters)queryParams).getDeviceIdentifier());
                     }           
                 }
                 else {

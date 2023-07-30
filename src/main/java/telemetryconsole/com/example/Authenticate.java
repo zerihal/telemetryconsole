@@ -14,34 +14,34 @@ import telemetryconsole.com.example.Util.StringHelper;
 
 public class Authenticate {
 
-    private UserDetails _userDetails;
-    private UserDBConnector _userDbConnector;
+    private UserDetails userDetails;
+    private UserDBConnector userDbConnector;
 
-    public UserDetails get_userDetails() {
-        return _userDetails;
+    public UserDetails getUserDetails() {
+        return userDetails;
     }
 
-    public void set_userDetails(UserDetails _userDetails) {
-        this._userDetails = _userDetails;
+    public void setUserDetails(UserDetails userDetails) {
+        this.userDetails = userDetails;
     }
 
     public Authenticate(String username, String password) throws InvalidUserDetailsException {
         
-        if (StringHelper.IsStringNullOrEmpty(username) || StringHelper.IsStringNullOrEmpty(password)) {
+        if (StringHelper.isStringNullOrEmpty(username) || StringHelper.isStringNullOrEmpty(password)) {
             throw new InvalidUserDetailsException(username, password);
         }
 
         // Create and set a new instance of UserDetails. This has a public setter so if user has entered something
         // incorrectly then this instance of Authenticate can be reused by just updating UserDetails and rerunning 
         // DoAuthentication.
-        set_userDetails(new UserDetails(username, password));
+        setUserDetails(new UserDetails(username, password));
 
         // Create new instance of DB connector, which is required to check the user from the authentication operation. 
         // This is just for this instance of Authenticate, so a private field.
-        _userDbConnector = new UserDBConnector();
+        this.userDbConnector = new UserDBConnector();
     }
 
-    public User DoAuthentication() {
+    public User doAuthentication() {
        
         User user;
 
@@ -50,8 +50,8 @@ public class Authenticate {
         // if the user (username) does not exist   
         AccessLevel accessLevel;
         try {
-            accessLevel = CheckUser(get_userDetails());
-            user = new User(_userDetails, accessLevel);
+            accessLevel = checkUser(getUserDetails());
+            user = new User(userDetails, accessLevel);
         } catch (UserDbException e) {
             // Create an instance of "error user" to return so that the caller knows
             // that there has been an exception and can take some appropriate action
@@ -63,13 +63,13 @@ public class Authenticate {
         return user;
     }
     
-    private AccessLevel CheckUser(UserDetails userDetails) throws UserDbException {
+    private AccessLevel checkUser(UserDetails userDetails) throws UserDbException {
 
         // Set initial query string for the user DB query
         String sql = "SELECT username, password, accesslevel "
                     + "FROM users WHERE username = ?";
         
-        try (Connection conn = _userDbConnector.connect();
+        try (Connection conn = userDbConnector.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             // Set the value in prepared statement for username to that supplied in UserDetails

@@ -6,16 +6,16 @@ import telemetryconsole.com.example.Util.FileHelper;
 public class SetupSampleUsers implements ISetupSample {
     
     @Override
-    public void RunSetup() {
+    public void runSetup() {
 
         // If DB already exists then delete it
-        if (FileHelper.DeleteFile(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
+        if (FileHelper.deleteFile(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
 
             System.out.println("Existing sample DB found and deleted or did not exist");
 
             // Create the database and a new users table
             System.out.println("Creating users DB and table");
-            Sandbox.CreateNewDatabase(DefaultStrings.ConsoleUsersDB);
+            Sandbox.createNewDatabase(DefaultStrings.ConsoleUsersDB);
 
             String sql = "CREATE TABLE IF NOT EXISTS users (\n"
                     + "	id integer PRIMARY KEY,\n"
@@ -24,14 +24,14 @@ public class SetupSampleUsers implements ISetupSample {
                     + " accesslevel integer NOT NULL\n"
                     + ");";
 
-            Sandbox.CreateNewTable(DefaultStrings.ConsoleUsersDB, sql);
+            Sandbox.createNewTable(DefaultStrings.ConsoleUsersDB, sql);
 
             // Insert some sample users into the table
             System.out.println("Adding sample users");
-            Sandbox.InsertUser(DefaultStrings.ConsoleUsersDB, "jblogs", "password1", 2);
-            Sandbox.InsertUser(DefaultStrings.ConsoleUsersDB, "jbiggs", "password2", 1);
-            Sandbox.InsertUser(DefaultStrings.ConsoleUsersDB, "bFish", "password3", 1);
-            Sandbox.InsertUser(DefaultStrings.ConsoleUsersDB, "aNon", "password4", 0);
+            Sandbox.insertUser(DefaultStrings.ConsoleUsersDB, "jblogs", "password1", 2);
+            Sandbox.insertUser(DefaultStrings.ConsoleUsersDB, "jbiggs", "password2", 1);
+            Sandbox.insertUser(DefaultStrings.ConsoleUsersDB, "bFish", "password3", 1);
+            Sandbox.insertUser(DefaultStrings.ConsoleUsersDB, "aNon", "password4", 0);
 
             // Output all users in new DB table
             System.out.println("Sample users DB created - the following users have been added:");
@@ -39,6 +39,6 @@ public class SetupSampleUsers implements ISetupSample {
             System.out.println("Existing sample DB found but could not be deleted - this contains the following:");
         }
 
-        Sandbox.SelectAllUsers(DefaultStrings.ConsoleUsersDB);
+        Sandbox.selectAllUsers(DefaultStrings.ConsoleUsersDB);
     }
 }

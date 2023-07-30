@@ -10,16 +10,16 @@ public class SetupSampleData implements ISetupSample {
     private static Random rand = new Random();
 
     @Override
-    public void RunSetup() {
+    public void runSetup() {
         
         // If DB already exists then delete it
-        if (FileHelper.DeleteFile(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.DeviceDataDB)) {
+        if (FileHelper.deleteFile(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.DeviceDataDB)) {
 
             System.out.println("Existing sample DB found and deleted or did not exist");
 
             // Create the database and a new device data table
             System.out.println("Creating device data DB and table");
-            Sandbox.CreateNewDatabase(DefaultStrings.DeviceDataDB);
+            Sandbox.createNewDatabase(DefaultStrings.DeviceDataDB);
             
             // Create SQL query for new table. For this example we'll allow the detailed
             // device data to be null, however in reality most of these (other than maybe
@@ -42,21 +42,21 @@ public class SetupSampleData implements ISetupSample {
             + "	tripdata text\n"
             + ");";
 
-            Sandbox.CreateNewTable(DefaultStrings.DeviceDataDB, sql);
+            Sandbox.createNewTable(DefaultStrings.DeviceDataDB, sql);
 
             // Generate and insert some sample data to the DB
             String deviceType = "ESP32-100";
 
             for (int i = 0; i < 10; i++) {
                 String deviceName = "TestDrive_" + String.valueOf(i);
-                String deviceId = GenerateSerialNo();
+                String deviceId = generateSerialNo();
 
                 // Create 10 sample entries for the device
                 for (int i2 = 0; i2 < 10; i2++) {
-                    String randomDateTime = GetDateTimeString();
-                    int randomStatus = GenerateStatus();
+                    String randomDateTime = getDateTimeString();
+                    int randomStatus = generateStatus();
 
-                    Sandbox.InsertDeviceData(DefaultStrings.DeviceDataDB, 
+                    Sandbox.insertDeviceData(DefaultStrings.DeviceDataDB, 
                         randomDateTime, deviceId, deviceName, deviceType, randomStatus);
                 }
             }
@@ -67,10 +67,10 @@ public class SetupSampleData implements ISetupSample {
         }
 
         // Output the data logged
-        Sandbox.SelectAllDevices(DefaultStrings.DeviceDataDB);
+        Sandbox.selectAllDevices(DefaultStrings.DeviceDataDB);
     }
     
-    private static String GetDateTimeString() {
+    private static String getDateTimeString() {
         String day = String.format("%02d", rand.nextInt(29) + 1);
         String month = String.format("%02d",rand.nextInt(1) + 5);
         String year = "2023";
@@ -81,7 +81,7 @@ public class SetupSampleData implements ISetupSample {
         return day + "/" + month  + "/" + year + " " + hour + ":" + min + ":" + sec;
     }
 
-    private static String GenerateSerialNo() {
+    private static String generateSerialNo() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVXYZ0123456789";
 
         String serialNo = "S";
@@ -94,7 +94,7 @@ public class SetupSampleData implements ISetupSample {
         return serialNo;
     }
 
-    private static int GenerateStatus() {
+    private static int generateStatus() {
         // Status 0 is Healthy
         // Status 1 is Tripped
         // Status 2 is Fault

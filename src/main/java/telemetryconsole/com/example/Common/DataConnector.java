@@ -28,22 +28,22 @@ public class DataConnector {
         return conn;
     }
 
-    public Object ConnectDataDB() {
+    public Object connectDataDB() {
         // Placeholder method only at the moment - to return database connection
         return null;
     }
 
-    public Object GetDeviceDataAPI() {
+    public Object getDeviceDataAPI() {
         // Placeholder method only at the moment - to return device data API connector
         return null;
     }
 
-    public Object GetAppDataAPI() {
+    public Object getAppDataAPI() {
         // Placeholder method only at the moment - to return app data API connector
         return null;       
     }
 
-    public ArrayList<Object[]> GetData(QueryType queryType, QueryParameters queryParams, QueryFilter queryFilter) {
+    public ArrayList<Object[]> getData(QueryType queryType, QueryParameters queryParams, QueryFilter queryFilter) {
         
         ArrayList<Object[]> rawData = new ArrayList<Object[]>();
         String dbQuery = null;

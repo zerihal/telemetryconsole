@@ -45,30 +45,30 @@ public class QueryTest {
 
         // Setup sample device data DB
         ISetupSample setupSampleData = new SetupSampleData();
-        setupSampleData.RunSetup();
+        setupSampleData.runSetup();
 
         // Sample user DB may already exist from AuthenticateTest setup (if that was run first) - check this and
         // if not then create it as also required for this test set
-        if (!Sandbox.DataBaseExists(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
+        if (!Sandbox.dataBaseExists(DefaultStrings.WindowsSQLiteDbPath() + DefaultStrings.ConsoleUsersDB)) {
             System.out.println("Sample users DB required for this test set but does not exist - recreating ...");
             setupSampleData = new SetupSampleUsers();
-            setupSampleData.RunSetup();
+            setupSampleData.runSetup();
         } else {
             System.out.println("Sample users DB found - no recreation required");
         }
 
         // Create an authenticated test user to check preconditions
         testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
-        currentUser = new Authenticate(testUser.get_userDetails().getUsername(), testUser.get_userDetails().getPassword()).DoAuthentication();
+        currentUser = new Authenticate(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword()).doAuthentication();
 
         // Create instance of DeviceParameters to pass to the query. As the data, including the device identifier,
         // in the sample device data DB is dynamically generated from the setup action above, we need to take one
         // from here. There are 100 entries in the sample DB so just take one at random
-        testDeviceIdentifier = Sandbox.SelectRandomDeviceIdentifier(DefaultStrings.DeviceDataDB);
+        testDeviceIdentifier = Sandbox.selectRandomDeviceIdentifier(DefaultStrings.DeviceDataDB);
 
         // In case there was a problem, thow an exception here so that it does obscure the results from the actual
         // tests that are to be run
-        if (StringHelper.IsStringNullOrEmpty(testDeviceIdentifier)) {
+        if (StringHelper.isStringNullOrEmpty(testDeviceIdentifier)) {
             throw new Exception("Test setup failed - device identifier not set!");
         }
 
@@ -95,8 +95,8 @@ public class QueryTest {
 
         assertNotNull(currentUser);
 
-        AccessLevel authUserAccess = currentUser.get_accessLevel();
-        AccessLevel expectedAccessLvl = testUser.get_accessLevel();
+        AccessLevel authUserAccess = currentUser.getAccessLevel();
+        AccessLevel expectedAccessLvl = testUser.getAccessLevel();
         assertEquals(authUserAccess, expectedAccessLvl);
 
         /*
@@ -104,7 +104,7 @@ public class QueryTest {
         */
         
         assertNotNull(deviceParameters);;
-        assertTrue(QueryValidator.IsValidSerialNo(deviceParameters.getDeviceIdentifier()));
+        assertTrue(QueryValidator.isValidSerialNo(deviceParameters.getDeviceIdentifier()));
 
         /*
         Postcondition:
@@ -131,14 +131,14 @@ public class QueryTest {
         QueryResults queryResults = null;
 
         try {
-            queryResults = query.ExecuteQuery();
+            queryResults = query.executeQuery();
         } catch (ParseDataException e) {
             // Use a simple assert null check on the exception to fail the test if thrown
             assertNull(e, "Unexpected parse data exception");
         }
 
         // Check that an instance of DataConnector was created and linked to Query
-        DataConnector dataConnector = query.get_dataConnector();
+        DataConnector dataConnector = query.getDataConnector();
         assertNotNull(dataConnector);
 
         // Check queryResults not null
@@ -155,7 +155,7 @@ public class QueryTest {
         // * ParseData is an internal method in Query, so we get this from TestHelper which uses reflection or 
         // a copy for testing purposes.
         
-        ArrayList<Object[]> testDataRaw = dataConnector.GetData(query.getQueryType(), devParams, null);
+        ArrayList<Object[]> testDataRaw = dataConnector.getData(query.getQueryType(), devParams, null);
 
         try {
             ArrayList<QueryItem> parsedData = TestHelper.ParseDeviceDataInternal(query, testDataRaw);
@@ -163,7 +163,7 @@ public class QueryTest {
 
             for (int i = 0; i < parsedData.size(); i++) {
 
-                Date dataEntryDate = parsedData.get(i).get_dateLogged();
+                Date dataEntryDate = parsedData.get(i).getDateLogged();
                 String parsedDateToString = dtFormat.format(dataEntryDate);
                 String expectedDate = (String)testDataRaw.get(i)[0];
                 assertEquals(parsedDateToString, expectedDate);
@@ -217,7 +217,7 @@ public class QueryTest {
 
         TelemetryConsole telemetryConsole = new TelemetryConsole();
         UserDetails badUser = new UserDetails("iFake", "password123");
-        telemetryConsole.set_currentUser(new User(badUser, AccessLevel.NONE));
+        telemetryConsole.setCurrentUser(new User(badUser, AccessLevel.NONE));
         DeviceParameters testDevPars = new DeviceParameters(testDeviceIdentifier);
 
         boolean canQuery = TestHelper.CanRunQueryInternal(telemetryConsole, QueryType.QUERYDEVICE, testDevPars);
@@ -235,7 +235,7 @@ public class QueryTest {
 
         // All serial numbers start with S, so we'll use a different character to ensure that it is invalid
         String invalidDeviceIdent = "XYZ12345678";
-        assertFalse(QueryValidator.IsValidSerialNo(invalidDeviceIdent));
+        assertFalse(QueryValidator.isValidSerialNo(invalidDeviceIdent));
 
         // Note: Prompt would be handled by the UI for a false return from QueryValidator so out of 
         // scope for this test
@@ -256,7 +256,7 @@ public class QueryTest {
         QueryResults queryResults = null;
 
         try {
-            queryResults = query.ExecuteQuery();
+            queryResults = query.executeQuery();
         } catch (ParseDataException e) {
             // Use a simple assert null check on the exception to fail the test if thrown
             assertNull(e, "Unexpected parse data exception");

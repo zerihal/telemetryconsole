@@ -14,43 +14,42 @@ import telemetryconsole.com.example.Common.QueryFilters.QueryFilter;
 
 public class Query {
 
-    private QueryType _queryType;
-    private QueryParameters _queryParameters;
-    private DataConnector _dataConnector;
+    private QueryType queryType;
+    private QueryParameters queryParameters;
+    private DataConnector dataConnector;
+    private QueryFilter queryFilter;
 
-    private QueryFilter _queryFilter;
-
-    public DataConnector get_dataConnector() {
-        return _dataConnector;
+    public DataConnector getDataConnector() {
+        return dataConnector;
     }
 
-    public void set_dataConnector(DataConnector _dataConnector) {
-        this._dataConnector = _dataConnector;
+    public void setDataConnector(DataConnector dataConnector) {
+        this.dataConnector = dataConnector;
     }
 
     public QueryType getQueryType() {
-        return _queryType;
+        return queryType;
     }
 
     public QueryParameters getQueryParameters() {
-        return _queryParameters;
+        return queryParameters;
     }
 
     public void setQueryParameters(QueryParameters queryParameters) {
-        this._queryParameters = queryParameters;
+        this.queryParameters = queryParameters;
     }
 
-    public QueryFilter get_queryFilter() {
-        return _queryFilter;
+    public QueryFilter getQueryFilter() {
+        return queryFilter;
     }
 
-    public void set_queryFilter(QueryFilter _queryFilter) {
-        this._queryFilter = _queryFilter;
+    public void setQueryFilter(QueryFilter queryFilter) {
+        this.queryFilter = queryFilter;
     }
 
     public Query(QueryType selectedQueryType, QueryParameters params) {
         
-        _queryType = selectedQueryType;
+        queryType = selectedQueryType;
         
         if (params != null) {
             setQueryParameters(params);
@@ -61,23 +60,23 @@ public class Query {
     public Query(QueryType selectedQueryType, QueryParameters params, QueryFilter queryFilter) {
         
         this(selectedQueryType, params);
-        set_queryFilter(queryFilter);
+        setQueryFilter(queryFilter);
     }
 
-    public QueryResults ExecuteQuery() throws ParseDataException {
+    public QueryResults executeQuery() throws ParseDataException {
 
         // Create instance of DataConnector
-        if (_dataConnector == null)
-            _dataConnector = new DataConnector();
+        if (dataConnector == null)
+            dataConnector = new DataConnector();
 
         // Query data source to obtain raw data
-        ArrayList<Object[]> rawQueryData = get_dataConnector().GetData(getQueryType(), getQueryParameters(), get_queryFilter());
+        ArrayList<Object[]> rawQueryData = getDataConnector().getData(getQueryType(), getQueryParameters(), getQueryFilter());
 
         // Parse results to obtain collection of Device objects
         ArrayList<QueryItem> devices = null;
         
         try {
-            devices = ParseDeviceData(rawQueryData);
+            devices = parseDeviceData(rawQueryData);
         } catch (ParseException e) {
             throw new ParseDataException();
         } catch (ParseDataException parseDataException) {
@@ -85,13 +84,13 @@ public class Query {
         }
         
         // Create new instance of QueryResults
-        QueryResults queryResults = new QueryResults(get_dataConnector(), devices);
+        QueryResults queryResults = new QueryResults(getDataConnector(), devices);
 
         // Return QueryResults
         return queryResults;
     }
 
-    private ArrayList<QueryItem> ParseDeviceData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
+    private ArrayList<QueryItem> parseDeviceData(ArrayList<Object[]> resultSet) throws ParseException, ParseDataException {
 
         // Parse the raw data and convert date strings to date format and status to the appropriate enum values before
         // creating a new Device (QueryItem) object for each entry and returning all as a new collection.

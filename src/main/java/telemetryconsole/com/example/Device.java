@@ -6,49 +6,49 @@ import telemetryconsole.com.example.Common.DeviceStatus;
 
 public class Device extends QueryItem {
 
-    private String _deviceIdentifier;
-    private String _deviceName;
-    private String _deviceTypeName;
-    private DeviceStatus _deviceStatus;
+    private String deviceIdentifier;
+    private String deviceName;
+    private String deviceTypeName;
+    private DeviceStatus deviceStatus;
 
-    public String get_deviceIdentifier() {
-        return _deviceIdentifier;
+    public String getDeviceIdentifier() {
+        return deviceIdentifier;
     }
 
-    public void set_deviceIdentifier(String _deviceIdentifier) {
-        this._deviceIdentifier = _deviceIdentifier;
+    public void setDeviceIdentifier(String deviceIdentifier) {
+        this.deviceIdentifier = deviceIdentifier;
     }
 
-    public String get_deviceName() {
-        return _deviceName;
+    public String getDeviceName() {
+        return deviceName;
     }
 
-    public void set_deviceName(String _deviceName) {
-        this._deviceName = _deviceName;
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
-    public String get_deviceTypeName() {
-        return _deviceTypeName;
+    public String getDeviceTypeName() {
+        return deviceTypeName;
     }
 
-    public void set_deviceTypeName(String _deviceTypeName) {
-        this._deviceTypeName = _deviceTypeName;
+    public void setDeviceTypeName(String deviceTypeName) {
+        this.deviceTypeName = deviceTypeName;
     }   
 
-    public DeviceStatus get_deviceStatus() {
-        return _deviceStatus;
+    public DeviceStatus getDeviceStatus() {
+        return deviceStatus;
     }
 
-    public void set_deviceStatus(DeviceStatus _deviceStatus) {
-        this._deviceStatus = _deviceStatus;
+    public void setDeviceStatus(DeviceStatus deviceStatus) {
+        this.deviceStatus = deviceStatus;
     }
 
     public Device(Date loggedDT, String deviceIdentifier, String deviceName, String deviceTypeName, DeviceStatus status) {
-        set_dateLogged(loggedDT);
-        set_deviceIdentifier(deviceIdentifier);
-        set_deviceName(deviceName);
-        set_deviceTypeName(deviceTypeName);
-        set_deviceStatus(status);
+        setDateLogged(loggedDT);
+        setDeviceIdentifier(deviceIdentifier);
+        setDeviceName(deviceName);
+        setDeviceTypeName(deviceTypeName);
+        setDeviceStatus(status);
     }
     
     public Device() {}
