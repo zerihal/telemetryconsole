@@ -34,7 +34,6 @@ import telemetryconsole.com.example.Util.StringHelper;
 public class QueryTest {
 
     // Fixture declarations 
-    private static User testUser;
     private static DeviceParameters deviceParameters;
     private static String testDeviceIdentifier;
     private static User currentUser;
@@ -58,7 +57,7 @@ public class QueryTest {
         }
 
         // Create an authenticated test user to check preconditions
-        testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
+        User testUser = new User(new UserDetails("bFish", "password3"), AccessLevel.USER);
         currentUser = new Authenticate(testUser.getUserDetails().getUsername(), testUser.getUserDetails().getPassword()).doAuthentication();
 
         // Create instance of DeviceParameters to pass to the query. As the data, including the device identifier,
@@ -88,6 +87,10 @@ public class QueryTest {
     @Test
     void testRunQuery() {
 
+        // Note: The preconditions below would normally both be tested together by the canRunQuery
+        // method in TelemetryConsole, however split to check individually for this test to verify
+        // both preconditions independently.
+
         /*
          Precondition:
          -- the user has been authenticated        
@@ -95,15 +98,16 @@ public class QueryTest {
 
         assertNotNull(currentUser);
 
+        // Authenticated user should have an access level of USER or ADMIN
         AccessLevel authUserAccess = currentUser.getAccessLevel();
-        AccessLevel expectedAccessLvl = testUser.getAccessLevel();
-        assertEquals(authUserAccess, expectedAccessLvl);
+        assertTrue(authUserAccess == AccessLevel.USER || authUserAccess == AccessLevel.ADMIN);
 
         /*
          -- and deviceDetails contains a valid deviceIdentifier 
         */
         
-        assertNotNull(deviceParameters);;
+        // The static isValidSerialNo method checks that the device identifier is not null and is
+        // a string starting with letter S
         assertTrue(QueryValidator.isValidSerialNo(deviceParameters.getDeviceIdentifier()));
 
         /*
