@@ -46,7 +46,8 @@ public class TelemetryConsole {
 
         // Create instance of Authenticate - this can be reused should incorrect user details be entered
         // by updating the property in the instance and rerunning DoAuthentication
-        setAuthenticate(new Authenticate(username, password));
+        Authenticate authenticate = new Authenticate(username, password);
+        setAuthenticate(authenticate);
 
         // Set the user from the do authenticate operation (which returns a new instance of User)
         setCurrentUser(getAuthenticate().doAuthentication());
@@ -86,7 +87,8 @@ public class TelemetryConsole {
         // Execute the query and set results
         setCurrentQueryResults(query.executeQuery());
 
-        // Placeholder - further UI actions (if appropriate here)
+        // Any subsequent UI or other actions to be performed in onQueryRun method
+        onQueryRun();
     }
 
     // Placeholder method for the UI to enable/disable login button
@@ -129,6 +131,11 @@ public class TelemetryConsole {
 
         enableRunQuery(canRunQuery);
         return canRunQuery;
+    }
+
+    private void onQueryRun()
+    {
+        // Placeholder for UI and other actions following a query being run
     }
 
     private void enableRunQuery(Boolean canRunQuery) {
