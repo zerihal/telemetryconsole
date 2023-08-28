@@ -11,6 +11,8 @@ import telemetryconsole.com.example.Common.User;
 import telemetryconsole.com.example.Util.StringHelper;
 
 public class TelemetryConsole {
+
+    // Jakarta SB V1
     
     private User currentUser;
     private Authenticate authenticate;
